@@ -35,7 +35,7 @@
                                         <img src="{{ url('img/others/bell.png') }}"  width="40">
                                     </a>
                                     <div class="media-body">          
-                                        <h4 class="media-heading user_name">Customer</h4>
+                                        <h4 class="media-heading user_name">Admin</h4>
                                         {{ $nd->message }}
                                         <p>
                                             <small><a href="{{ url('/delete-notif') }}/{{ $nd->id }}">Delete</a></small>
