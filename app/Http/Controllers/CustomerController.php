@@ -227,6 +227,14 @@ class CustomerController extends Controller
         $model->status_pesanan = 2;
         $model->save();
 
+        $getAdmin = Customer::where('role', 1)->first();
+
+        $notif = new Notif();
+        $notif->message = "Bukti Pembayaran untuk transaksi dengan ID: ".$model->id." sudah di upload";
+        $notif->user_id = $getAdmin;
+        $notif->notif_active = 1;
+        $notif->save();
+
         return redirect('/transactions');
     }
 
@@ -235,6 +243,14 @@ class CustomerController extends Controller
         $model = Ttransaction::find($id);
         $model->status_pesanan = 4;
         $model->save();
+
+        $getAdmin = Customer::where('role', 1)->first();
+
+        $notif = new Notif();
+        $notif->message = "Transaksi dengan ID: ".$model->id." Selesai";
+        $notif->user_id = $getAdmin;
+        $notif->notif_active = 1;
+        $notif->save();
 
         return redirect('/transactions');
     }

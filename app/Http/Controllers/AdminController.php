@@ -96,6 +96,12 @@ class AdminController extends Controller
             $model = Ttransaction::find($id);
             $model->status_pesanan = 1;
             $model->save();
+
+            $notif = new Notif();
+            $notif->message = "Silahkan Upload Bukti Pembayaran untuk transaksi dengan ID: $model->id";
+            $notif->user_id = $model->id_user;
+            $notif->notif_active = 1;
+            $notif->save();
         }
 
         return redirect('/order');
@@ -124,6 +130,12 @@ class AdminController extends Controller
         $model->status_pesanan = 3;
         $model->no_resi = $nomor_resi;
         $model->save();
+
+        $notif = new Notif();
+        $notif->message = "Transaksi Diterima, Nomor resi anda adalah $nomor_resi";
+        $notif->user_id = $model->id_user;
+        $notif->notif_active = 1;
+        $notif->save();
 
         return redirect('/order');
     }
