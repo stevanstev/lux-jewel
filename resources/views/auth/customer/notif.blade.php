@@ -38,9 +38,9 @@
                                         <h4 class="media-heading user_name">Customer</h4>
                                         {{ $nd->message }}
                                         <p>
-                                            <small><a href="{{ url('/delete-notifs') }}/{{ $nd->id }}">Delete</a></small>
+                                            <small><a href="{{ url('/delete-notif') }}/{{ $nd->id }}">Delete</a></small>
                                             @if($nd->notif_active)
-                                            | <small><a href="{{ url('/mark-notifs') }}/{{ $nd->id }}">Mark as Read</a></small>
+                                            | <small><a href="{{ url('/mark-notif') }}/{{ $nd->id }}">Mark as Read</a></small>
                                             @endif
                                         </p>
                                     </div>
