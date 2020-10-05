@@ -5,5 +5,5 @@
 @endsection
 
 @section('section')
-    
+    @include('template/banner')
 @endsection
