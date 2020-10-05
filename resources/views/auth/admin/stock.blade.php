@@ -43,7 +43,7 @@
                             <td>{{ $item->nama_produk }}</td>
                             <td>{{ $item->berat_produk }}</td>
                             <td>
-                                <img src="/img/product/{{ $item->foto }}" width="80"/>
+                                <img src="{{ url('/img/product/') }}/{{ $item->foto }}" width="80"/>
                             </td>
                             <td>{{ $item->stok }}</td>
                             <td>{{ $item->harga_produk }}</td>
