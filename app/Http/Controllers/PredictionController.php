@@ -15,13 +15,25 @@ use DB;
 class PredictionController extends Controller
 {
     //
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
     public function index() {
         $products = Product::paginate(10);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/prediction', ['products' => $products]);
+        return view('/auth/admin/prediction', ['products' => $products, 'isNotif' => $isNotif]);
     }
 
     public function predict(Request $request){
+        $isNotif = $this->getNotif();
         $id = $request->input('id');
         
         $currentDate = Carbon::now();
@@ -74,6 +86,7 @@ class PredictionController extends Controller
         $result = [
             'value' => $prediction_formula,
             'nama_produk' => $nama_produk,
+            'isNotif' => $isNotif
         ];
 
         return view('/auth/admin/predict_result', $result);

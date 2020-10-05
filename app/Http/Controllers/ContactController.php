@@ -6,7 +6,18 @@ use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
     public function index() {
-        return view('guest/contact');
+        $isNotif = $this->getNotif();
+        return view('guest/contact', ['isNotif' => $isNotif]);
     }
 }
