@@ -9,24 +9,40 @@ use App\Color;
 use App\Sender;
 use App\Categorie;
 
+use App\Notif;
+
+use Auth;
+
 
 use Illuminate\Support\Facades\Validator;
 
 class StockController extends Controller
 {
     //
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
     public function index() {
+        $isNotif = $this->getNotif();
         $products = Product::paginate(10);
 
-        return view('auth/admin/stock', ['products' => $products]);
+        return view('auth/admin/stock', ['isNotif' => $isNotif, 'products' => $products]);
     }
 
     public function add() {
+        $isNotif = $this->getNotif();
         $colors = Color::all();
         $categories = Categorie::all();
         $senders = Sender::all();
 
-        return view('auth/admin/add_stock', ['colors' => $colors, 'categories' => $categories, 'senders' => $senders]);
+        return view('auth/admin/add_stock', ['isNotif' => $isNotif, 'colors' => $colors, 'categories' => $categories, 'senders' => $senders]);
     }
 
     public function addAction(Request $request) {
@@ -81,11 +97,12 @@ class StockController extends Controller
     }
 
     public function update($id) {
+        $isNotif = $this->getNotif();
         $product = Product::find($id);
         $colors = Color::all();
         $categories = Categorie::all();
 
-        return view('auth/admin/update_stock', ['products' => $product, 'colors' => $colors, 'categories' => $categories]);
+        return view('auth/admin/update_stock', ['isNotif' => $isNotif,'products' => $product, 'colors' => $colors, 'categories' => $categories]);
     }
 
     public function updateAction(Request $request) {
@@ -147,10 +164,11 @@ class StockController extends Controller
     }
 
     public function search(Request $request) {
+        $isNotif = $this->getNotif();
         $item = $request->input('item');
 
         $products = Product::where('nama_produk', $item)->orWhere('nama_produk', 'like', '%' . $item . '%')->paginate(10);
 
-        return view('auth/admin/stock', ['products' => $products]);
+        return view('auth/admin/stock', ['products' => $products, ['isNotif' => $isNotif]]);
     }
 }

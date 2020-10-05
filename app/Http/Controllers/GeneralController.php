@@ -10,11 +10,25 @@ use App\Customer;
 
 use Auth;
 
+use App\Notif;
+
 class GeneralController extends Controller
 {
     //
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
     public function userProfile() {
-        return view('auth/user_profile');
+        $isNotif = $this->getNotif();
+
+        return view('auth/user_profile', ['isNotif' => $isNotif]);
     }
 
     public function updateUser(Request $request) {
@@ -69,6 +83,18 @@ class GeneralController extends Controller
 		}else if(Auth::user()->role == 2){
 			return redirect('/dashboard');	
 		}
+    }
+
+    public function notifikasi(){
+        $isNotif = $this->getNotif();
+        $notif_data = Notif::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
+        $total = sizeof($notif_data);
+
+        if (Auth::user()->role == 1) {
+            return view('auth/admin/notif', ['total' => $total,'notif_data' => $notif_data,'isNotif' => $isNotif]);
+        } else {
+            return view('auth/customer/notif', ['total' => $total, 'notif_data' => $notif_data, 'isNotif' => $isNotif]);
+        }
     }
 
     public function logout() {

@@ -10,6 +10,8 @@ use App\Transaction;
 
 use App\Product;
 
+use Auth;
+
 use App\Color;
 use App\Detail;
 
@@ -17,40 +19,93 @@ use App\Sender;
 
 use App\Categorie;
 
+use App\Notif;
+
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function deleteNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->delete();
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
+
+    public function markNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->notif_active = 0;
+            $model->save();
+
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
+
     public function index() {
-        return view('/auth/admin/home');
+        $isNotif = $this->getNotif();
+        return view('/auth/admin/home', ['isNotif' =>$isNotif]);
     }
 
     public function order() {
         $data = Ttransaction::paginate(10);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/order',['data' => $data]);
+        return view('/auth/admin/order',['data' => $data, 'isNotif' =>$isNotif]);
     }
 
     public function tambahDetail($id) {
         $data = Ttransaction::find($id);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/update_transcation', ['data' => $data]);
+        return view('/auth/admin/update_transcation', ['data' => $data, 'isNotif' =>$isNotif]);
     }
 
     public function updateTransaksi(Request $request) {
         $id = $request->input('id');
+        $choose = $request->input('konfirmasi');
+        $reason = $request->input('alasan');
+        $finalRes = ($reason != "") ? "dengan alasan $reason" : "";
 
-        $model = Ttransaction::find($id);
-        $model->status_pesanan = 1;
-        $model->save();
+        if ($choose == "batal") {
+            $model = Ttransaction::find($id);
+            $notif = new Notif();
+            $notif->message = "Transaksi Dibatalkan oleh admin $finalRes";
+            $notif->user_id = $model->id_user;
+            $notif->notif_active = 1;
+            $notif->save();
+
+            $model->delete();
+
+        } else {
+            $model = Ttransaction::find($id);
+            $model->status_pesanan = 1;
+            $model->save();
+        }
 
         return redirect('/order');
     }
 
     public function konfirmasiBayar($id) {
         $data = Ttransaction::find($id);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/konfirmasi_bayar', ['data' => $data]);
+        return view('/auth/admin/konfirmasi_bayar', ['data' => $data, 'isNotif' =>$isNotif]);
     }
 
     public function konfirmasiBayarAction(Request $request) {
@@ -132,12 +187,14 @@ class AdminController extends Controller
 
     public function history(){
         $t = Transaction::paginate(10);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/history', ['t' => $t]);
+        return view('/auth/admin/history', ['t' => $t, 'isNotif' =>$isNotif]);
     }
 
     public function variations(){
-        return view('/auth/admin/variations');
+        $isNotif = $this->getNotif();
+        return view('/auth/admin/variations', ['isNotif' =>$isNotif]);
     }
 
     public function addColor(Request $request) {
@@ -193,21 +250,22 @@ class AdminController extends Controller
 
     public function searchHistory(Request $request) {
         $search = $request->input('history');
-
+        $isNotif = $this->getNotif();
         $t = Transaction::where('kota_penerima', $search)->orWhere('kota_penerima', 'like', '%' . $search . '%')->paginate(10);
 
-        return view('/auth/admin/history', ['t' => $t]);
+        return view('/auth/admin/history', ['t' => $t, 'isNotif' =>$isNotif]);
     }
 
     public function prediction() {
-        return view('/auth/admin/prediction');
+        $isNotif = $this->getNotif();
+        return view('/auth/admin/prediction', ['isNotif' =>$isNotif]);
     }
 
     public function searchOrder(Request $request) {
         $search = $request->input('item');
-
+        $isNotif = $this->getNotif();
         $data = Ttransaction::where('nama_penerima', $search)->orWhere('nama_penerima', 'like', '%' . $search . '%')->paginate(10);
 
-        return view('/auth/admin/order', ['data' => $data]);
+        return view('/auth/admin/order', ['data' => $data, 'isNotif' =>$isNotif]);
     }
 }

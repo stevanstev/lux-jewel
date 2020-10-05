@@ -73,6 +73,9 @@ Route::group(['middleware' => 'web'], function() {
             Route::post('/add-color', 'AdminController@addColor');
             Route::post('/add-kategori', 'AdminController@addCategorie');
             Route::post('/add-sender', 'AdminController@addSender');
+
+            Route::get('/delete-notifs/{id}', 'AdminController@deleteNotif');
+            Route::get('/mark-notifs/{id}', 'AdminController@markNotif');
         });
         
         //Customer
@@ -95,9 +98,13 @@ Route::group(['middleware' => 'web'], function() {
             Route::get('/item-details/{id}', 'CustomerController@itemDetails');
 
             Route::post('/search-product', 'CustomerController@searchProduct');
+
+            Route::get('/delete-notif/{id}', 'CustomerController@deleteNotif');
+            Route::get('/mark-notif/{id}', 'CustomerController@markNotif');
         });
     
         //Other
+        Route::get('/notifikasi', 'GeneralController@notifikasi');
         Route::get('/user-profile', 'GeneralController@userProfile');
         Route::post('/update-user-action', 'GeneralController@updateUser');
         Route::get('/home','GeneralController@redirection');

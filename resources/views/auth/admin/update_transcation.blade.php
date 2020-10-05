@@ -18,6 +18,13 @@
                             <form action="{{ url('/update-transaksi') }}" method="post" enctype="multipart/form-data">
                                 <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
                                 <input type="text" hidden name="id" value="{{ $data->id }}"/>
+                                <input type="text" name="alasan" class="form-control" value="" placeholder="Alasan"/>
+                                <br/>
+                                <select name="konfirmasi" class="form-control">
+                                    <option value="setuju">Terima</option>
+                                    <option value="batal">Tolak</option>
+                                </select>
+                                <br/>
                                 <div class="row">
                                     <div class="col-md-12" align="center">
                                         <button type="submit" class="site-btn">Konfirmasi</button>

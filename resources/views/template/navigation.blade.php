@@ -63,6 +63,12 @@
                         @endguest
                         @auth
                             <a href="{{ url('/user-profile') }}">{{ Auth::user()->nama_lengkap }}</a>
+                            <a href="{{ url('/notifikasi') }}">
+                                @if($isNotif) 
+                                    <span class="bg-danger"><i class="fa fa-send"></i> Notification</span>
+                                @else 
+                                    Notification
+                                @endif
                             <a href="{{ url('/logout') }}">Logout</a>
                         @endauth
                     </div>

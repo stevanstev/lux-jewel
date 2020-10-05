@@ -20,12 +20,12 @@
             $sub_total = 0;
             $kurir = "";
         @endphp
-        <section class="shop-cart spad">
+        <section class="shop-cart spad container-fluid">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="shop__cart__table">
-                            <table>
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Produk</th>
@@ -48,7 +48,7 @@
                                             </div>
                                         </td>
                                         <td class="cart__price">Rp.{{ number_format($c->harga_produk, 2) }}</td>
-                                        <td class="cart__total">{{ $c->jumlah }}</td>
+                                        <td class="cart__total">x{{ $c->jumlah }}</td>
                                         <td class="cart__total">Rp.{{ number_format($c->total_harga, 2) }}</td>
                                         <td class="cart__close">
                                             <form method="post" action="{{ url('/delete-cart-item') }}">
@@ -125,14 +125,14 @@
 
             function getval(sel){
                 if (sel.value == "JNE") {
-                    $("#tambahan").html('Rp 20,000');
+                    $("#tambahan").html('Rp 20,000.00');
                     $("#kurir-final").val('20000');
                     $("#nama-kurir").val(sel.value);
                     let current = $("#sub-total").val();
                     $("#total-harga").html('Rp ' + (parseInt(current) + 20000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '.00');
                     $("#btn-checkout").prop('disabled',false);
                 } else if(sel.value == "JNT") {
-                    $("#tambahan").html('Rp 15,000');
+                    $("#tambahan").html('Rp 15,000.00');
                     $("#kurir-final").val('15000');
                     $("#nama-kurir").val(sel.value);
                     let current = $("#sub-total").val();
@@ -140,7 +140,7 @@
                     $("#btn-checkout").prop('disabled',false);
                 } else {
                     if (sel.value != "") {
-                        $("#tambahan").html('Rp. 18.000');
+                        $("#tambahan").html('Rp. 18.000.00');
                         $("#kurir-final").val('18000');
                         $("#nama-kurir").val(sel.value);
                         let current = $("#sub-total").val();

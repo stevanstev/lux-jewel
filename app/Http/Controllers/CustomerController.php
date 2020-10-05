@@ -14,26 +14,66 @@ use App\Product;
 
 use App\Ttransaction;
 
+use App\Customer;
+
+use App\Notif;
+
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
+    public function getNotif() {   
+        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
+
+        if($isNotif) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function deleteNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->delete();
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
+
+    public function markNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->notif_active = 0;
+            $model->save();
+
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
+
     public function index() {
-        return view('/auth/customer/home');
+        $isNotif = $this->getNotif();
+
+        return view('/auth/customer/home',['isNotif' => $isNotif]);
     }
 
     public function items() {
         $products = Product::paginate(10);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/products', ['products' => $products]);
+        return view('/auth/customer/products', ['products' => $products, 'isNotif' => $isNotif]);
     }
 
     public function searchProduct(Request $request) {
         $query = $request->input('search');
+        $isNotif = $this->getNotif();
 
         $products = Product::where('nama_produk', $query)->orWhere('nama_produk', 'like', '%'.$query.'%')->paginate(10);
 
-        return view('/auth/customer/products', ['products' => $products]);
+        return view('/auth/customer/products', ['products' => $products, 'isNotif' => $isNotif]);
     }
 
     public function itemsToCart(Request $request) {
@@ -83,8 +123,9 @@ class CustomerController extends Controller
         $carts = Cart::where('id_user', Auth::user()->id)->get();
         $jsonItems = json_encode($carts);
         $sender = Sender::all();
+        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/carts', ['carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
+        return view('/auth/customer/carts', ['isNotif' => $isNotif,'carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
     }
 
     public function deleteCartItem(Request $request) {
@@ -138,6 +179,14 @@ class CustomerController extends Controller
         $model->biaya_kirim = $harga_kurir;
         $model->save();
 
+        $getAdmin = Customer::where('role', 1)->first();
+
+        $notif = new Notif();
+        $notif->message = "New Order from ". Auth::user()->nama_lengkap;
+        $notif->user_id = $getAdmin->id;
+        $notif->notif_active = 1;
+        $notif->save();
+
         $deleteCart = Cart::where('id_user', $user_id);
         $deleteCart->delete();
 
@@ -145,15 +194,17 @@ class CustomerController extends Controller
     }
 
     public function transactions() {
-        $data = Ttransaction::paginate(10);
+        $data = Ttransaction::where('id_user', Auth::user()->id)->paginate(10);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/transactions', ['data' => $data]);
+        return view('/auth/customer/transactions', ['isNotif' => $isNotif, 'data' => $data]);
     }
 
     public function uploadBukti($id) {
         $data = Ttransaction::find($id);
+        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/upload_bukti', ['data' => $data]);
+        return view('/auth/customer/upload_bukti', ['isNotif' => $isNotif,'data' => $data]);
     }
 
     public function uploadBuktiAction(Request $request) {
@@ -190,8 +241,9 @@ class CustomerController extends Controller
 
     public function itemDetails($id) {
         $products = Product::find($id);
+        $isNotif = $this->getNotif();
         $related = Product::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
 
-        return view('/auth/customer/detail_page', ['products' => $products, 'related' => $related]);
+        return view('/auth/customer/detail_page', ['isNotif' => $isNotif, 'products' => $products, 'related' => $related]);
     }
 }
