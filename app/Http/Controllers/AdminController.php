@@ -1,5 +1,5 @@
 <?php
-
+//to do, waktu konfirmasi bukti, harus ada tombol cancel
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
