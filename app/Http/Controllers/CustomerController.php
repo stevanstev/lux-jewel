@@ -231,7 +231,7 @@ class CustomerController extends Controller
 
         $notif = new Notif();
         $notif->message = "Bukti Pembayaran untuk transaksi dengan ID: ".$model->id." sudah di upload";
-        $notif->user_id = $getAdmin;
+        $notif->user_id = $getAdmin->id;
         $notif->notif_active = 1;
         $notif->save();
 
@@ -248,7 +248,7 @@ class CustomerController extends Controller
 
         $notif = new Notif();
         $notif->message = "Transaksi dengan ID: ".$model->id." Selesai";
-        $notif->user_id = $getAdmin;
+        $notif->user_id = $getAdmin->id;
         $notif->notif_active = 1;
         $notif->save();
 
