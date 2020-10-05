@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Product;
 use App\Color;
+use App\Sender;
 use App\Categorie;
 
 
@@ -23,8 +24,9 @@ class StockController extends Controller
     public function add() {
         $colors = Color::all();
         $categories = Categorie::all();
+        $senders = Sender::all();
 
-        return view('auth/admin/add_stock', ['colors' => $colors, 'categories' => $categories]);
+        return view('auth/admin/add_stock', ['colors' => $colors, 'categories' => $categories, 'senders' => $senders]);
     }
 
     public function addAction(Request $request) {
@@ -147,7 +149,7 @@ class StockController extends Controller
     public function search(Request $request) {
         $item = $request->input('item');
 
-        $products = Product::where('nama_produk', $item)->orWhere('nama_produk', 'like', '%' . $item . '%')->get();
+        $products = Product::where('nama_produk', $item)->orWhere('nama_produk', 'like', '%' . $item . '%')->paginate(10);
 
         return view('auth/admin/stock', ['products' => $products]);
     }

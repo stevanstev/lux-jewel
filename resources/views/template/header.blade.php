@@ -16,3 +16,4 @@ rel="stylesheet">
 <link rel="stylesheet" href="{{ URL::asset('css/owl.carousel.min.css') }}" type="text/css">
 <link rel="stylesheet" href="{{ URL::asset('css/slicknav.min.css') }}" type="text/css">
 <link rel="stylesheet" href="{{ URL::asset('css/style.css') }}" type="text/css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>

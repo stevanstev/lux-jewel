@@ -41,7 +41,8 @@
                                 <li class="{{ Request::path() == 'admin-dash' ? 'active' : '' }}"><a href="{{ url('/admin-dash') }}">Home</a></li>
                                 <li class="{{ Request::path() == 'order' ? 'active' : '' }}"><a href="{{ url('/order') }}">Order List</a></li>
                                 <li class="{{ Request::path() == 'stock' ? 'active' : '' }}"><a href="{{ url('/stock') }}">Stock</a></li>
-                                <li class="{{ Request::path() == 'checkout' ? 'active' : '' }}"><a href="{{ url('/checkout') }}">Prediction</a></li>
+                                <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/variations') }}">Variations</a></li>
+                                <li class="{{ Request::path() == 'prediction' ? 'active' : '' }}"><a href="{{ url('/prediction') }}">Prediction</a></li>
                                 <li class="{{ Request::path() == 'history' ? 'active' : '' }}"><a href="{{ url('/history') }}">History</a></li>
                             @else
                                 <li class="{{ Request::path() == 'dashboard' ? 'active' : '' }}"><a href="{{ url('/dashboard') }}">Home</a></li>
@@ -65,9 +66,6 @@
                             <a href="{{ url('/logout') }}">Logout</a>
                         @endauth
                     </div>
-                    <ul class="header__right__widget">
-                        <li><span class="icon_search search-switch"></span></li>
-                    </ul>
                 </div>
             </div>
         </div>

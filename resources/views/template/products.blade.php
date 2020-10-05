@@ -6,6 +6,17 @@
                     <h4>Our product</h4>
                 </div>
             </div>
+            <div class="col-lg-4 col-md-4">
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="section-title">
+                        <form method="post" action="{{ url('/search-prod') }}">
+                            <input type="hidden" value="{{ csrf_token() }}" name="_token" />
+                            <input type="text" name="search" placeholder="Search Product"/>
+                            <button type="submit" class="btn btn-success">Search</button>
+                        </form>
+                    </div>
+                </div>
         </div>
         <div class="row property__gallery">
             @foreach($products as $p) 

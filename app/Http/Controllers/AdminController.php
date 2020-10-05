@@ -10,8 +10,14 @@ use App\Transaction;
 
 use App\Product;
 
-use Illuminate\Support\Facades\Validator;
+use App\Color;
+use App\Detail;
 
+use App\Sender;
+
+use App\Categorie;
+
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -31,26 +37,11 @@ class AdminController extends Controller
         return view('/auth/admin/update_transcation', ['data' => $data]);
     }
 
-    public function updatePengiriman(Request $request) {
-        Validator::make($request->all(), 
-        [
-            'biaya_pengiriman' => 'required|numeric',
-            'kurir' => 'required'
-        ], 
-        [
-            'biaya_pengiriman.required' => 'Biaya pengiriman harus diisi',
-            'biaya_pengiriman.numeric' => 'Format biaya pengiriman salah',
-            'kurir.required' => 'Kurir harus diisi'
-        ])->validate();
-
-        $biaya_pengiriman = $request->input('biaya_pengiriman');
-        $kurir = $request->input('kurir');
+    public function updateTransaksi(Request $request) {
         $id = $request->input('id');
 
         $model = Ttransaction::find($id);
-        $model->biaya_kirim = $biaya_pengiriman;
         $model->status_pesanan = 1;
-        $model->kurir = $kurir;
         $model->save();
 
         return redirect('/order');
@@ -94,6 +85,15 @@ class AdminController extends Controller
             $currentStock = $p->stok;
             $p->stok = $currentStock - $value->jumlah;
             $p->save();
+
+            $d = new Detail();
+            $d->nama_produk = $value->nama_produk;
+            $d->qty = $value->jumlah;
+            $d->berat_produk = $value->berat_produk;
+            $d->detail_harga = $value->total_harga;
+            $d->predict_dt_m = Date('n');
+            $d->predict_dt_y = Date('y');
+            $d->save();
         }
 
         $kota_penerima = $tempTransaction->kota_penerima;
@@ -131,6 +131,83 @@ class AdminController extends Controller
     }
 
     public function history(){
-        return view('/auth/admin/history');
+        $t = Transaction::paginate(10);
+
+        return view('/auth/admin/history', ['t' => $t]);
+    }
+
+    public function variations(){
+        return view('/auth/admin/variations');
+    }
+
+    public function addColor(Request $request) {
+        Validator::make($request->all(), 
+        [
+            'color' => 'required'
+        ], 
+        [
+            'color.required' => 'Warna harus diisi'
+        ])->validate();
+
+        $color = $request->input('color');
+        $model = new Color();
+        $model->nama_warna = $color;
+        $model->save();
+
+        return redirect()->back();
+    }
+
+    public function addCategorie(Request $request) {
+        Validator::make($request->all(), 
+        [
+            'kategori' => 'required'
+        ], 
+        [
+            'kategori.required' => 'Kategori harus diisi'
+        ])->validate();
+
+        $kategori = $request->input('kategori');
+        $model = new Categorie();
+        $model->nama_kategori = $kategori;
+        $model->save();
+
+        return redirect()->back();
+    }
+
+    public function addSender(Request $request) {
+        Validator::make($request->all(), 
+        [
+            'sender' => 'required'
+        ], 
+        [
+            'sender.required' => 'Pengirim harus diisi'
+        ])->validate();
+
+        $sender = $request->input('sender');
+        $model = new Sender();
+        $model->nama_pengirim = $sender;
+        $model->save();
+
+        return redirect()->back();
+    }
+
+    public function searchHistory(Request $request) {
+        $search = $request->input('history');
+
+        $t = Transaction::where('kota_penerima', $search)->orWhere('kota_penerima', 'like', '%' . $search . '%')->paginate(10);
+
+        return view('/auth/admin/history', ['t' => $t]);
+    }
+
+    public function prediction() {
+        return view('/auth/admin/prediction');
+    }
+
+    public function searchOrder(Request $request) {
+        $search = $request->input('item');
+
+        $data = Ttransaction::where('nama_penerima', $search)->orWhere('nama_penerima', 'like', '%' . $search . '%')->paginate(10);
+
+        return view('/auth/admin/order', ['data' => $data]);
     }
 }

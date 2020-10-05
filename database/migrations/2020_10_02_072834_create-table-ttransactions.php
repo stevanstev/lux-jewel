@@ -44,6 +44,6 @@ class CreateTableTtransactions extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('ttransacions');
+        Schema::dropIfExists('ttransactions');
     }
 }

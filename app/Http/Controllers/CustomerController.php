@@ -8,6 +8,8 @@ use Auth;
 
 use App\Cart;
 
+use App\Sender;
+
 use App\Product;
 
 use App\Ttransaction;
@@ -16,20 +18,20 @@ use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
-    public function redirection() {
-        if(Auth::user()->role == 1){
-			return redirect('/admin-dash');
-		}else if(Auth::user()->role == 2){
-			return redirect('/dashboard');	
-		}
-    }
-
     public function index() {
         return view('/auth/customer/home');
     }
 
     public function items() {
         $products = Product::paginate(10);
+
+        return view('/auth/customer/products', ['products' => $products]);
+    }
+
+    public function searchProduct(Request $request) {
+        $query = $request->input('search');
+
+        $products = Product::where('nama_produk', $query)->orWhere('nama_produk', 'like', '%'.$query.'%')->paginate(10);
 
         return view('/auth/customer/products', ['products' => $products]);
     }
@@ -73,15 +75,16 @@ class CustomerController extends Controller
         $model->total_harga = $total_harga;
         $model->foto = $foto;
         $model->save();
-        
+
         return redirect('/shop');
     }
 
     public function shopCart() {
         $carts = Cart::where('id_user', Auth::user()->id)->get();
         $jsonItems = json_encode($carts);
+        $sender = Sender::all();
 
-        return view('/auth/customer/carts', ['carts' => $carts, 'jsonItems' => $jsonItems]);
+        return view('/auth/customer/carts', ['carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
     }
 
     public function deleteCartItem(Request $request) {
@@ -93,11 +96,24 @@ class CustomerController extends Controller
     }
 
     public function itemCheckout(Request $request) {
+        Validator::make($request->all(), 
+        [
+            'kurir-final' => 'required',
+            'nama-kurir' => 'required',
+        ], 
+        [
+            'kurir-final.required' => 'Mohon isi Kurir',
+            'nama-kurir.required' => 'Mohon isi Kurir',
+        ])->validate();
+        
+        $harga_kurir = $request->input('kurir-final');
+        $nama_kurir = $request->input('nama-kurir');
         $user_id = Auth::user()->id;
         $items = $request->input('jsonItems');
         $kota_penerima = Auth::user()->kota;
         $provinsi_penerima = Auth::user()->provinsi;
         $total_transaksi = $request->input('total_transaksi');
+        $total_transaksi = $total_transaksi + $harga_kurir;
         $tgl_transaksi = Date('Y-i-s H:m:d');
         $kode_pos_p = Auth::user()->kode_pos;
         $kelurahan_p = Auth::user()->kelurahan;
@@ -118,6 +134,8 @@ class CustomerController extends Controller
         $model->status_pesanan = 0;
         $model->alamat_penerima = $alamat_penerima;
         $model->items = $items;
+        $model->kurir = $nama_kurir;
+        $model->biaya_kirim = $harga_kurir;
         $model->save();
 
         $deleteCart = Cart::where('id_user', $user_id);
@@ -175,11 +193,5 @@ class CustomerController extends Controller
         $related = Product::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
 
         return view('/auth/customer/detail_page', ['products' => $products, 'related' => $related]);
-    }
-
-    public function logout() {
-        Auth::logout();
-
-        return redirect('/login');
     }
 }

@@ -34,6 +34,8 @@ Route::group(['middleware' => 'web'], function() {
         Route::get('/checkout', 'CheckoutController@index');
 
         Route::get('/product-details/{id}', 'ProductController@details');
+
+        Route::post('/search-prod', 'IndexController@searchProd');
     });
     
     //Auth
@@ -52,7 +54,7 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/order', 'AdminController@order');
             Route::get('/tambah-detail/{id}', 'AdminController@tambahDetail');
-            Route::post('/update-pengiriman', 'AdminController@updatePengiriman');
+            Route::post('/update-transaksi', 'AdminController@updateTransaksi');
 
             Route::get('/konfirmasi-bayar/{id}', 'AdminController@konfirmasiBayar');
             Route::post('/konfirmasi-bayar-action', 'AdminController@konfirmasiBayarAction');
@@ -60,6 +62,17 @@ Route::group(['middleware' => 'web'], function() {
             Route::post('/selesai-transaksi', 'AdminController@selesaiTransaksi');
 
             Route::get('/history', 'AdminController@history');
+            Route::post('/search-history', 'AdminController@searchHistory');
+
+            Route::post('/search-order', 'AdminController@searchOrder');
+
+            Route::get('/prediction', 'PredictionController@index');
+            Route::post('/predict-action', 'PredictionController@predict');
+
+            Route::get('/variations', 'AdminController@variations');
+            Route::post('/add-color', 'AdminController@addColor');
+            Route::post('/add-kategori', 'AdminController@addCategorie');
+            Route::post('/add-sender', 'AdminController@addSender');
         });
         
         //Customer
@@ -80,10 +93,14 @@ Route::group(['middleware' => 'web'], function() {
             Route::post('/konfirmasi-sampai', 'CustomerController@konfirmasiSampai');
 
             Route::get('/item-details/{id}', 'CustomerController@itemDetails');
+
+            Route::post('/search-product', 'CustomerController@searchProduct');
         });
     
         //Other
-        Route::get('/home','CustomerController@redirection');
-        Route::get('/logout', 'CustomerController@logout');
+        Route::get('/user-profile', 'GeneralController@userProfile');
+        Route::post('/update-user-action', 'GeneralController@updateUser');
+        Route::get('/home','GeneralController@redirection');
+        Route::get('/logout', 'GeneralController@logout');
     });
 });
