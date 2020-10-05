@@ -30,19 +30,34 @@ class PredictionController extends Controller
         $getDTY = Date('y');
 
         // perhitungan
-        $periodePenjualan = array(1,2);
+        $periodePenjualan = array(1,2,3,4,5,6,7,8,9,10,11,12);
         $tsquare = array_map(function($p){ return $p**2; }, $periodePenjualan);
         $penjualan = array();
 
         $data = Product::find($id);
         $nama_produk = $data->nama_produk;
 
-        foreach($periodePenjualan as $d) {
-            $m = $getDTM - $d;
+        for($i = 0 ; $i < sizeof($periodePenjualan); $i++) {
+            $m = $getDTM - $periodePenjualan[$i];
             $m = strval($m);
             $y = strval($getDTY);
+
+            if (intval($m) == 0) {
+            	$getDTY = $getDTY - 1;
+            	$getDTM = 22;
+
+            	$m = $getDTM - $periodePenjualan[$i];
+            	$m = strval($m);
+            	$y = strval($getDTY);
+            }
+
             $enumData = DB::select("SELECT COUNT(qty) as total FROM details WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
-            array_push($penjualan, $enumData[0]->total);
+            
+            if ($enumData == "") {
+            	array_push($penjualan, 0);
+            } else {
+            	array_push($penjualan, $enumData[0]->total);
+            }
         }
 
         $count_periode = array_sum($periodePenjualan);
@@ -50,10 +65,10 @@ class PredictionController extends Controller
         $count_tsquare = array_sum($tsquare);
         $count_penjualan = array_sum($penjualan);
         $count_t_y = $count_periode * $count_penjualan;
-        $n = 2;
+        $n = 12;
         $b = (($n*$count_t_y) - ($count_periode * $count_penjualan)) / (($n*$count_tsquare) - ($count_periode_square));
         $a = (($count_penjualan - ($b * $count_periode)) / $n);
-        $t = 3;
+        $t = 13;
         $prediction_formula = $a + ($b * $t);
 
         $result = [
