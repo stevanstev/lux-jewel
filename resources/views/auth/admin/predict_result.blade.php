@@ -13,8 +13,15 @@
                         <div class="card-body cart">
                             <div class="col-sm-12 empty-cart-cls text-center"> <img src="{{ url('img/others/predict.png') }}" width="100" height="100" class="img-fluid mb-4 mr-3">
                                 <h3><strong>Prediksi Penjualan Periode ke 13 untuk {{ $nama_produk }}</strong></h3>
-                                <h4>Berdasarkan Data Penjualan 12 Bulan Sebelumnya</4>
-                                <h4><strong>{{ $value }} Item<strong></h4> <a href='{{ url("/prediction") }}' class="btn btn-primary cart-btn-transform m-3" data-abc="true">Kembali</a>
+                                <br/>
+                                <h4>Berdasarkan Data Penjualan 12 Bulan Sebelumnya</h4>
+                                <br/>
+                                <h4>Stock Item: {{ $value }}</h4>
+                                <br/>
+                                <h4>MAD: {{ $mad }}</h4>
+                                <br/>
+                                <h4>MSE: {{ $mse }}</h4>
+                                <a href='{{ url("/prediction") }}' class="btn btn-primary cart-btn-transform m-3" data-abc="true">Kembali</a>
                             </div>
                         </div>
                     </div>

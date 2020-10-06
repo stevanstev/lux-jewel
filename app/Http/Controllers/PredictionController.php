@@ -6,11 +6,17 @@ use Illuminate\Http\Request;
 
 use App\Detail;
 
+use App\Prediction;
+
 use Carbon\Carbon;
 
 use App\Product;
 
 use DB;
+
+use App\Notif;
+
+use Auth;
 
 class PredictionController extends Controller
 {
@@ -82,11 +88,37 @@ class PredictionController extends Controller
         $a = (($count_penjualan - ($b * $count_periode)) / $n);
         $t = 13;
         $prediction_formula = $a + ($b * $t);
+        $mad = function($array, $prediction) {
+            $result = array();
+
+            foreach($array as $a) {
+                array_push($result, round(abs($a - $prediction), 6));
+            }
+            
+            return $result;
+        };
+
+        $mad_map = $mad($penjualan, $prediction_formula);
+        $mad_result = array_sum($mad_map);
+        $mad_result = $mad_result / $n;
+
+        $mse_squaring = array_map(function($val) { return $val ** 2; },$mad_map);
+        $mse_result = array_sum($mse_squaring);
+        $mse = round( $mse_result / $n , 6);
+
+        $prediction = new Prediction();
+        $prediction->tgl_prediksi = date('Y-m-d H:i:s');
+        $prediction->hasil = $nama_produk.'#'.strval(floor($prediction_formula));
+        $prediction->mse = $mse;
+        $prediction->mad = $mad_result;
+        $prediction->save();
 
         $result = [
-            'value' => $prediction_formula,
+            'value' => floor($prediction_formula),
             'nama_produk' => $nama_produk,
-            'isNotif' => $isNotif
+            'isNotif' => $isNotif,
+            'mad' => $mad_result,
+            'mse' => $mse,
         ];
 
         return view('/auth/admin/predict_result', $result);

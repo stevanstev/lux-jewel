@@ -76,6 +76,14 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/delete-notifs/{id}', 'AdminController@deleteNotif');
             Route::get('/mark-notifs/{id}', 'AdminController@markNotif');
+
+            Route::get('/pdf-predict-generate', 'AdminController@pdfGeneratePredict');
+            Route::get('/pdf-reporting-generate', 'AdminController@pdfGenerateReport');
+
+            Route::get('/laporan-penjualan', 'AdminController@laporanPenjualan');
+            Route::get('/laporan-prediksi', 'AdminController@laporanPrediksi');
+
+            Route::get('/p-not-found', 'AdminController@pNotFound');
         });
         
         //Customer

@@ -155,7 +155,7 @@ class CustomerController extends Controller
         $provinsi_penerima = Auth::user()->provinsi;
         $total_transaksi = $request->input('total_transaksi');
         $total_transaksi = $total_transaksi + $harga_kurir;
-        $tgl_transaksi = Date('Y-i-s H:m:d');
+        $tgl_transaksi = Date('Y-m-d H:i:s');
         $kode_pos_p = Auth::user()->kode_pos;
         $kelurahan_p = Auth::user()->kelurahan;
         $nama_penerima = Auth::user()->nama_lengkap;

@@ -8,12 +8,19 @@ use App\Ttransaction;
 
 use App\Transaction;
 
+use DB;
+
 use App\Product;
 
 use Auth;
 
+use PDF;
+
 use App\Color;
+
 use App\Detail;
+
+use App\Prediction;
 
 use App\Sender;
 
@@ -271,6 +278,74 @@ class AdminController extends Controller
     public function prediction() {
         $isNotif = $this->getNotif();
         return view('/auth/admin/prediction', ['isNotif' =>$isNotif]);
+    }
+
+    public function pdfGeneratePredict(Request $request) {
+        $getNama = $request->query('nama_produk');
+        $getPredict = Prediction::where('hasil', 'like', $getNama.'%')->get();
+
+        if (count($getPredict) == 0) {
+            return redirect('/p-not-found');
+        } else {
+            $pdf = PDF::loadView('template/pdf_predict_html',['predicts' => $getPredict, 'nama' => $getNama]);
+
+            return $pdf->download('prediksi.pdft');
+        }
+    }
+
+    public function pNotFound() {
+        $isNotif = $this->getNotif();
+
+        return view('/auth/admin/predict_empty', ['isNotif' => $isNotif]);
+    }
+
+    public function pdfGenerateReport(Request $request) {
+        $getPeriode = $request->query('periode');
+        $periode = explode('-', $getPeriode);
+        $p_month = ($periode[1] < 10) ? '0'.$periode[1] : $periode[1]; 
+        $p_year = $periode[0];
+        $concat_p = $p_year.'-'.$p_month;
+        $getProduct = Product::all();
+        $obj = new \StdClass();
+        $finalData = array();
+        foreach ($getProduct as $p) {
+            $nama_produk = $p->nama_produk;
+            $getDetails = DB::select("SELECT SUM(qty) as qty FROM details WHERE nama_produk='$nama_produk' and created_at like '$concat_p%'");
+            $obj->id = $p->id;
+            $obj->nama_produk = $nama_produk;
+            $obj->qty = $getDetails[0]->qty;
+            $obj->berat_produk = $p->berat_produk;
+            $obj->harga_produk = $p->harga_produk;
+            $obj->color = $p->color;
+            $obj->kategori = $p->kategori;
+
+            array_push($finalData, $obj);
+            $obj = new \StdClass();
+            $nama_produk = "";
+        }
+
+        $pdf = PDF::loadView('template/pdf_reporting_html', ['data' => $finalData, 'datetime' => $getPeriode]);
+
+        return $pdf->download('penjualan.pdft');
+    }
+
+    public function laporanPenjualan(){
+        $isNotif = $this->getNotif();
+        $getPeriod = DB::select('SELECT DISTINCT YEAR(created_at) AS "year", MONTH(created_at) as "month" FROM ttransactions');
+        $enumDate = array();
+
+        foreach($getPeriod as $gp) {
+            array_push($enumDate, $gp->year.'-'.$gp->month);
+        }
+
+        return view('/auth/admin/laporan_penjualan', ['isNotif' =>$isNotif, 'periodic' => $enumDate]);
+    }
+
+    public function laporanPrediksi(){
+        $isNotif = $this->getNotif();
+        $getProduct = Product::all();
+
+        return view('/auth/admin/laporan_prediksi', ['isNotif' => $isNotif, 'products' => $getProduct]);
     }
 
     public function searchOrder(Request $request) {

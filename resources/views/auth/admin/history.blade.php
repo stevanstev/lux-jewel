@@ -21,14 +21,17 @@
             <div class="col-md-3">
                 <h3>Riwayat Transaksi</h3>
             </div>
-            <div class="col-md-6" align="right">
+            <div class="col-md-4" align="right">
                 <form method="post" action="{{ url('/search-history') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
                     <input type="text" name="history" placeholder="Cari Riwayat"/>
                     <button class="btn btn-primary">Cari</button>
                 </form>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-3" align="right">
+                <a class="btn btn-success" href="{{ url('/laporan-penjualan') }}">Buat Laporan</a>
+            </div>
+            <div class="col-md-1"></div>
             <div class="col-md-12" style="margin-top: 20px">
                 <table class="table">
                     <thead class="thead-dark">
