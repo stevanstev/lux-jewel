@@ -313,7 +313,7 @@ class AdminController extends Controller
             $getDetails = DB::select("SELECT SUM(qty) as qty FROM details WHERE nama_produk='$nama_produk' and created_at like '$concat_p%'");
             $obj->id = $p->id;
             $obj->nama_produk = $nama_produk;
-            $obj->qty = $getDetails[0]->qty;
+            $obj->qty = (empty($getDetails[0]->qty) ? 0 : $getDetails[0]->qty);
             $obj->berat_produk = $p->berat_produk;
             $obj->harga_produk = $p->harga_produk;
             $obj->color = $p->color;
