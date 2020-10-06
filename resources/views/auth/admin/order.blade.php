@@ -147,7 +147,7 @@
                                         foreach($details as $key => $value) {
                                     @endphp
                                         <div class="row">
-                                            <div class="col-md-6"><img width="250" src="{{ url('img/product') }}/{{ $value->foto }}"></div>
+                                            <div class="col-md-6"><img width="250" src="{{ url('img/product') }}/{{ str_replace(' ', '%20', $value->foto) }}"></div>
                                             <div class="col-md-6">
                                                 <p>Nama: {{ $value->nama_produk }}</p>
                                                 <p>Berat: {{ $value->berat_produk }}</p>

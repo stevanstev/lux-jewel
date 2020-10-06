@@ -12,12 +12,12 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__left product__thumb nice-scroll">
                             <a class="pt active" href="#product-1">
-                                <img src="{{ url('img/product') }}/{{ $products->foto }}" alt="">
+                                <img src="{{ url('img/product') }}/{{ str_replace(' ', '%20', $products->foto) }}" alt="">
                             </a>
                         </div>
                         <div class="product__details__slider__content">
                             <div class="product__details__pic__slider owl-carousel">
-                                <img data-hash="product-1" class="product__big__img" src="{{ url('img/product') }}/{{ $products->foto }}" alt="">
+                                <img data-hash="product-1" class="product__big__img" src="{{ url('img/product') }}/{{ str_replace(' ', '%20', $products->foto) }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -122,9 +122,9 @@
                 @foreach($related as $r)
                     <div class="col-lg-3 col-md-4 col-sm-6">
                         <div class="product__item">
-                            <div class="product__item__pic set-bg" data-setbg="{{ url('/img/product') }}/{{ $r->foto }}">
+                            <div class="product__item__pic set-bg" data-setbg="{{ url('/img/product') }}/{{ str_replace(' ', '%20', $r->foto) }}">
                                 <ul class="product__hover">
-                                    <li><a href="{{ url('/img/product') }}/{{ $r->foto }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                    <li><a href="{{ url('/img/product') }}/{{ str_replace(' ', '%20', $r->foto) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
                                 </ul>
                             </div>
                             <div class="product__item__text">

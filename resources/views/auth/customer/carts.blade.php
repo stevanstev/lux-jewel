@@ -42,7 +42,7 @@
                                         @endphp
                                     <tr>
                                         <td class="cart__product__item">
-                                            <img src="{{ url('img/product') }}/{{ $c->foto }}" alt="" width="100">
+                                            <img src="{{ url('img/product') }}/{{ str_replace(' ', '%20', $c->foto) }}" alt="" width="100">
                                             <div class="cart__product__item__title">
                                                 <h6>{{ $c->nama_produk }}</h6>
                                             </div>

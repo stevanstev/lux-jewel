@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body cart">
-                        <div class="col-sm-12 empty-cart-cls text-center"> <img src="{{ url('img/others') }}/{{ $image }}" width="100" height="100" class="img-fluid mb-4 mr-3">
+                        <div class="col-sm-12 empty-cart-cls text-center"> <img src="{{ url('img/others') }}/{{ str_replace(' ','%20',$image) }}" width="100" height="100" class="img-fluid mb-4 mr-3">
                             <h3><strong>{{ $leading }}</strong></h3>
                             <h4>{{ $sub_leading }}</h4> <a href='{{ url("/$target") }}' class="btn btn-primary cart-btn-transform m-3" data-abc="true">{{ $button_text }}</a>
                         </div>

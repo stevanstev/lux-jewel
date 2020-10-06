@@ -22,9 +22,9 @@
             @foreach($products as $p) 
                 <div class="col-lg-3 col-md-4 col-sm-6 mix">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="{{ url('img/product') }}/{{ $p->foto }}">
+                        <div class="product__item__pic set-bg" data-setbg="{{ url('img/product') }}/{{ str_replace(' ', '%20', $p->foto) }}">
                             <ul class="product__hover">
-                                <li><a href="{{ url('img/product') }}/{{ $p->foto }}" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                <li><a href="{{ url('img/product') }}/{{ str_replace(' ', '%20', $p->foto) }}" class="image-popup"><span class="arrow_expand"></span></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">

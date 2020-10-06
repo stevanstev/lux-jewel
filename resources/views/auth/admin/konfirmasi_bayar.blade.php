@@ -20,7 +20,7 @@
                                 <input type="text" hidden name="id" value="{{ $data->id }}"/>
                                 <div class="row">
                                     <div class="col-md-12" align="center">
-                                        <img width="400" src="{{ url('img/proves') }}/{{ $data->bukti_pembayaran }}" />
+                                        <img width="400" src="{{ url('img/proves') }}/{{ str_replace(' ', '%20', $data->bukti_pembayaran) }}" />
                                     </div>
 
                                     <div class="col-md-12">
