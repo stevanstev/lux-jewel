@@ -8,12 +8,6 @@ use App\Product;
 
 class ProductController extends Controller
 {
-    public function index() {
-        $products = Product::paginate(4);
-
-        return view('guest/product', ['products' => $products]);
-    }
-
     public function authIndex() {
         return view('auth/product');
     }

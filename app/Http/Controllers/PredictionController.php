@@ -18,28 +18,16 @@ use App\Notif;
 
 use Auth;
 
-class PredictionController extends Controller
+class PredictionController extends GeneralController
 {
     //
-    public function getNotif() {   
-        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
-
-        if($isNotif) {
-            return true;
-        }
-        
-        return false;
-    }
-
     public function index() {
         $products = Product::paginate(10);
-        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/prediction', ['products' => $products, 'isNotif' => $isNotif]);
+        return view('/auth/admin/prediction', ['products' => $products, 'isNotif' => parent::getNotif()]);
     }
 
     public function predict(Request $request){
-        $isNotif = $this->getNotif();
         $id = $request->input('id');
         
         $currentDate = Carbon::now();
@@ -116,7 +104,7 @@ class PredictionController extends Controller
         $result = [
             'value' => floor($prediction_formula),
             'nama_produk' => $nama_produk,
-            'isNotif' => $isNotif,
+            'isNotif' => parent::getNotif(),
             'mad' => $mad_result,
             'mse' => $mse,
         ];

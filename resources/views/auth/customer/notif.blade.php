@@ -67,6 +67,8 @@
                             </div>
                         @endforeach
                     </div>      
+                    <br/>
+                    {{ $notif_data->render() }}    
                 </div>
                 <div class="col-md-1"></div>
             </div>

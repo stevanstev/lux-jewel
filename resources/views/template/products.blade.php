@@ -19,7 +19,7 @@
                 </div>
         </div>
         <div class="row property__gallery">
-            @foreach($products as $p) 
+            @foreach($results as $p) 
                 <div class="col-lg-3 col-md-4 col-sm-6 mix">
                     <div class="product__item">
                         <div class="product__item__pic set-bg" data-setbg="{{ url('img/product') }}/{{ str_replace(' ', '%20', $p->foto) }}">
@@ -45,7 +45,7 @@
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4" align="center">
-            {{ $products->render() }}
+            {{ $results->render() }}
         </div>
         <div class="col-md-4"></div>
     </div>

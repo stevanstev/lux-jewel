@@ -5,7 +5,7 @@
 @endsection
 
 @section('section')
-    @if(count($products) == 0)
+    @if(count($results) == 0 && $toggle == false)
         @include('template/empty_page', 
             [
                 'target' => 'tambah-stock', 
@@ -24,7 +24,7 @@
             <div class="col-md-6" align="right">
                 <form method="post" action="{{ url('/search-stock') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="text" name="item" placeholder="Cari Barang"/>
+                    <input type="text" name="search" placeholder="Cari Barang"/>
                     <button class="btn btn-primary">Cari</button>
                 </form>
             </div>
@@ -48,13 +48,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($products as $item)
+                        @foreach($results as $item)
                             <tr>
                                 <th scope="row">{{ $item->id }}</th>
                                 <td>{{ $item->nama_produk }}</td>
                                 <td>{{ $item->berat_produk }}</td>
                                 <td>
-                                    <img src="{{ url('/img/product/') }}/{{ str_replace(' ', '%20', $data->foto) }}" width="80"/>
+                                    <img src="{{ url('/img/product/') }}/{{ str_replace(' ', '%20', $item->foto) }}" width="80"/>
                                 </td>
                                 <td>{{ $item->stok }}</td>
                                 <td>{{ $item->harga_produk }}</td>
@@ -78,7 +78,7 @@
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4" align="center">
-                {{ $products->render() }}
+                {{ $results->render() }}
             </div>
             <div class="col-md-4"></div>
         </div>

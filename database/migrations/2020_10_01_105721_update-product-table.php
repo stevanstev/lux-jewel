@@ -15,7 +15,7 @@ class UpdateProductTable extends Migration
     {
         //
         Schema::table('products', function(Blueprint $table) {
-            $table->string('color');
+            $table->text('color');
             $table->string('kategori');
         });
     }

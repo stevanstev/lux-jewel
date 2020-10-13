@@ -17,7 +17,7 @@
                 </div>
                 <div class="col-lg-4 col-md-4">
                     <div class="section-title">
-                        <form method="post" action="{{ url('/search-product') }}">
+                        <form method="post" action="{{ url('/search-items') }}">
                             <input type="hidden" value="{{ csrf_token() }}" name="_token" />
                             <input type="text" name="search" placeholder="Search Product"/>
                             <button type="submit" class="btn btn-success">Search</button>
@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="row property__gallery">
-                @foreach($products as $p) 
+                @foreach($results as $p) 
                     <div class="col-lg-3 col-md-4 col-sm-6 mix">
                         <div class="product__item">
                             <div class="product__item__pic set-bg" data-setbg="{{ url('img/product') }}/{{ str_replace(' ', '%20', $p->foto) }}">
@@ -52,7 +52,7 @@
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4" align="center">
-                {{ $products->render() }}
+                {{ $results->render() }}
             </div>
             <div class="col-md-4"></div>
         </div>

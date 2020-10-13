@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Customer;
 
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 use App\Notif;
 
@@ -25,10 +25,30 @@ class GeneralController extends Controller
         return false;
     }
 
-    public function userProfile() {
-        $isNotif = $this->getNotif();
+    public function deleteNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->delete();
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
 
-        return view('auth/user_profile', ['isNotif' => $isNotif]);
+    public function markNotif($id) {
+        $model = Notif::find($id);
+        if ($model->user_id == Auth::user()->id) {
+            $model->notif_active = 0;
+            $model->save();
+
+            return redirect('/notifikasi');
+        } else {
+            return redirect('/notifikasi');
+        }
+    }
+
+    public function userProfile() {
+        return view('auth/user_profile', ['isNotif' => $this->getNotif()]);
     }
 
     public function updateUser(Request $request) {
@@ -86,14 +106,13 @@ class GeneralController extends Controller
     }
 
     public function notifikasi(){
-        $isNotif = $this->getNotif();
-        $notif_data = Notif::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
+        $notif_data = Notif::where('user_id', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(8);
         $total = sizeof($notif_data);
 
         if (Auth::user()->role == 1) {
-            return view('auth/admin/notif', ['total' => $total,'notif_data' => $notif_data,'isNotif' => $isNotif]);
+            return view('auth/admin/notif', ['total' => $total,'notif_data' => $notif_data,'isNotif' => $this->getNotif()]);
         } else {
-            return view('auth/customer/notif', ['total' => $total, 'notif_data' => $notif_data, 'isNotif' => $isNotif]);
+            return view('auth/customer/notif', ['total' => $total, 'notif_data' => $notif_data, 'isNotif' => $this->getNotif()]);
         }
     }
 

@@ -20,60 +20,10 @@ use App\Notif;
 
 use Illuminate\Support\Facades\Validator;
 
-class CustomerController extends Controller
+class CustomerController extends GeneralController
 {
-    public function getNotif() {   
-        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
-
-        if($isNotif) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    public function deleteNotif($id) {
-        $model = Notif::find($id);
-        if ($model->user_id == Auth::user()->id) {
-            $model->delete();
-            return redirect('/notifikasi');
-        } else {
-            return redirect('/notifikasi');
-        }
-    }
-
-    public function markNotif($id) {
-        $model = Notif::find($id);
-        if ($model->user_id == Auth::user()->id) {
-            $model->notif_active = 0;
-            $model->save();
-
-            return redirect('/notifikasi');
-        } else {
-            return redirect('/notifikasi');
-        }
-    }
-
     public function index() {
-        $isNotif = $this->getNotif();
-
-        return view('/auth/customer/home',['isNotif' => $isNotif]);
-    }
-
-    public function items() {
-        $products = Product::paginate(10);
-        $isNotif = $this->getNotif();
-
-        return view('/auth/customer/products', ['products' => $products, 'isNotif' => $isNotif]);
-    }
-
-    public function searchProduct(Request $request) {
-        $query = $request->input('search');
-        $isNotif = $this->getNotif();
-
-        $products = Product::where('nama_produk', $query)->orWhere('nama_produk', 'like', '%'.$query.'%')->paginate(10);
-
-        return view('/auth/customer/products', ['products' => $products, 'isNotif' => $isNotif]);
+        return view('/auth/customer/home',['isNotif' => parent::getNotif()]);
     }
 
     public function itemsToCart(Request $request) {
@@ -123,9 +73,8 @@ class CustomerController extends Controller
         $carts = Cart::where('id_user', Auth::user()->id)->get();
         $jsonItems = json_encode($carts);
         $sender = Sender::all();
-        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/carts', ['isNotif' => $isNotif,'carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
+        return view('/auth/customer/carts', ['isNotif' => parent::getNotif(),'carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
     }
 
     public function deleteCartItem(Request $request) {
@@ -195,16 +144,14 @@ class CustomerController extends Controller
 
     public function transactions() {
         $data = Ttransaction::where('id_user', Auth::user()->id)->paginate(10);
-        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/transactions', ['isNotif' => $isNotif, 'data' => $data]);
+        return view('/auth/customer/transactions', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function uploadBukti($id) {
         $data = Ttransaction::find($id);
-        $isNotif = $this->getNotif();
 
-        return view('/auth/customer/upload_bukti', ['isNotif' => $isNotif,'data' => $data]);
+        return view('/auth/customer/upload_bukti', ['isNotif' => parent::getNotif(),'data' => $data]);
     }
 
     public function uploadBuktiAction(Request $request) {
@@ -220,10 +167,45 @@ class CustomerController extends Controller
         $bukti = $request->file('bukti');
         $bukti->move("img/proves/",$bukti->getClientOriginalName());
 
+        $nama_penerima = $request->input('nama_penerima');
+        $kota_penerima = $request->input('kota_penerima');
+        $provinsi_penerima = $request->input('provinsi_penerima');
+        $kode_pos_p = $request->input('kode_pos_p');
+        $kelurahan_p = $request->input('kelurahan_p');
+        $no_telepon = $request->input('no_telepon');
+        $alamat_penerima = $request->input('alamat_penerima');
+
         $id = $request->input('id');
 
         $model = Ttransaction::find($id);
         $model->bukti_pembayaran = $bukti->getClientOriginalName();
+        if(!empty($nama_penerima)) {
+            $model->nama_penerima = $nama_penerima;
+        }
+
+        if(!empty($kota_penerima)) {
+            $model->kota_penerima = $kota_penerima;
+        }
+
+        if(!empty($provinsi_penerima)) {
+            $model->provinsi_penerima = $provinsi_penerima;
+        }
+
+        if(!empty($kode_pos_p)) {
+            $model->kode_pos_p = $kode_pos_p;
+        }
+
+        if(!empty($kelurahan_p)) {
+            $model->kelurahan_p = $kelurahan_p;
+        }
+
+        if(!empty($no_telepon)) {
+            $model->no_telepon = $no_telepon;
+        }
+
+        if(!empty($alamat_penerima)) {
+            $model->alamat_penerima = $alamat_penerima;
+        }
         $model->status_pesanan = 2;
         $model->save();
 
@@ -257,9 +239,9 @@ class CustomerController extends Controller
 
     public function itemDetails($id) {
         $products = Product::find($id);
-        $isNotif = $this->getNotif();
+        $colors = json_decode($products->color);
         $related = Product::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
 
-        return view('/auth/customer/detail_page', ['isNotif' => $isNotif, 'products' => $products, 'related' => $related]);
+        return view('/auth/customer/detail_page', ['isNotif' => parent::getNotif(), 'products' => $products, 'related' => $related, 'colors' => $colors]);
     }
 }

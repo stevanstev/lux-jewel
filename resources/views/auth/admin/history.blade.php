@@ -5,7 +5,7 @@
 @endsection
 
 @section('section')
-    @if(count($t) == 0) 
+    @if(count($results) == 0 && $toggle == false) 
         @include('template/empty_page', 
             [
                 'target' => 'order', 
@@ -24,7 +24,7 @@
             <div class="col-md-4" align="right">
                 <form method="post" action="{{ url('/search-history') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="text" name="history" placeholder="Cari Riwayat"/>
+                    <input type="text" name="search" placeholder="Cari Riwayat"/>
                     <button class="btn btn-primary">Cari</button>
                 </form>
             </div>
@@ -45,7 +45,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($t as $item)
+                        @foreach($results as $item)
                             <tr>
                                 <th scope="row">{{ $item->id }}</th>
                                 <td>{{ $item->nama_penerima }}</td>
@@ -68,7 +68,7 @@
         <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4" align="center">
-                {{ $t->render() }}
+                {{ $results->render() }}
             </div>
             <div class="col-md-4"></div>
         </div>

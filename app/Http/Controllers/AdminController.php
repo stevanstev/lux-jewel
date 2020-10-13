@@ -30,57 +30,16 @@ use App\Notif;
 
 use Illuminate\Support\Facades\Validator;
 
-class AdminController extends Controller
+class AdminController extends GeneralController
 {
-    public function getNotif() {   
-        $isNotif = Notif::where('user_id', Auth::user()->id)->where('notif_active', 1)->first();
-
-        if($isNotif) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    public function deleteNotif($id) {
-        $model = Notif::find($id);
-        if ($model->user_id == Auth::user()->id) {
-            $model->delete();
-            return redirect('/notifikasi');
-        } else {
-            return redirect('/notifikasi');
-        }
-    }
-
-    public function markNotif($id) {
-        $model = Notif::find($id);
-        if ($model->user_id == Auth::user()->id) {
-            $model->notif_active = 0;
-            $model->save();
-
-            return redirect('/notifikasi');
-        } else {
-            return redirect('/notifikasi');
-        }
-    }
-
     public function index() {
-        $isNotif = $this->getNotif();
-        return view('/auth/admin/home', ['isNotif' =>$isNotif]);
-    }
-
-    public function order() {
-        $data = Ttransaction::paginate(10);
-        $isNotif = $this->getNotif();
-
-        return view('/auth/admin/order',['data' => $data, 'isNotif' =>$isNotif]);
+        return view('/auth/admin/home', ['isNotif' => parent::getNotif()]);
     }
 
     public function tambahDetail($id) {
         $data = Ttransaction::find($id);
-        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/update_transcation', ['data' => $data, 'isNotif' =>$isNotif]);
+        return view('/auth/admin/update_transcation', ['data' => $data, 'isNotif' => parent::getNotif()]);
     }
 
     public function updateTransaksi(Request $request) {
@@ -116,9 +75,8 @@ class AdminController extends Controller
 
     public function konfirmasiBayar($id) {
         $data = Ttransaction::find($id);
-        $isNotif = $this->getNotif();
 
-        return view('/auth/admin/konfirmasi_bayar', ['data' => $data, 'isNotif' =>$isNotif]);
+        return view('/auth/admin/konfirmasi_bayar', ['data' => $data, 'isNotif' => parent::getNotif()]);
     }
 
     public function konfirmasiBayarAction(Request $request) {
@@ -204,16 +162,8 @@ class AdminController extends Controller
 
     }
 
-    public function history(){
-        $t = Transaction::paginate(10);
-        $isNotif = $this->getNotif();
-
-        return view('/auth/admin/history', ['t' => $t, 'isNotif' =>$isNotif]);
-    }
-
     public function variations(){
-        $isNotif = $this->getNotif();
-        return view('/auth/admin/variations', ['isNotif' =>$isNotif]);
+        return view('/auth/admin/variations', ['isNotif' => parent::getNotif()]);
     }
 
     public function addColor(Request $request) {
@@ -267,17 +217,8 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function searchHistory(Request $request) {
-        $search = $request->input('history');
-        $isNotif = $this->getNotif();
-        $t = Transaction::where('kota_penerima', $search)->orWhere('kota_penerima', 'like', '%' . $search . '%')->paginate(10);
-
-        return view('/auth/admin/history', ['t' => $t, 'isNotif' =>$isNotif]);
-    }
-
     public function prediction() {
-        $isNotif = $this->getNotif();
-        return view('/auth/admin/prediction', ['isNotif' =>$isNotif]);
+        return view('/auth/admin/prediction', ['isNotif' => parent::getNotif()]);
     }
 
     public function pdfGeneratePredict(Request $request) {
@@ -294,9 +235,7 @@ class AdminController extends Controller
     }
 
     public function pNotFound() {
-        $isNotif = $this->getNotif();
-
-        return view('/auth/admin/predict_empty', ['isNotif' => $isNotif]);
+        return view('/auth/admin/predict_empty', ['isNotif' => parent::getNotif()]);
     }
 
     public function pdfGenerateReport(Request $request) {
@@ -330,7 +269,6 @@ class AdminController extends Controller
     }
 
     public function laporanPenjualan(){
-        $isNotif = $this->getNotif();
         $getPeriod = DB::select('SELECT DISTINCT YEAR(created_at) AS "year", MONTH(created_at) as "month" FROM ttransactions');
         $enumDate = array();
 
@@ -338,21 +276,12 @@ class AdminController extends Controller
             array_push($enumDate, $gp->year.'-'.$gp->month);
         }
 
-        return view('/auth/admin/laporan_penjualan', ['isNotif' =>$isNotif, 'periodic' => $enumDate]);
+        return view('/auth/admin/laporan_penjualan', ['isNotif' => parent::getNotif(), 'periodic' => $enumDate]);
     }
 
     public function laporanPrediksi(){
-        $isNotif = $this->getNotif();
         $getProduct = Product::all();
 
-        return view('/auth/admin/laporan_prediksi', ['isNotif' => $isNotif, 'products' => $getProduct]);
-    }
-
-    public function searchOrder(Request $request) {
-        $search = $request->input('item');
-        $isNotif = $this->getNotif();
-        $data = Ttransaction::where('nama_penerima', $search)->orWhere('nama_penerima', 'like', '%' . $search . '%')->paginate(10);
-
-        return view('/auth/admin/order', ['data' => $data, 'isNotif' =>$isNotif]);
+        return view('/auth/admin/laporan_prediksi', ['isNotif' => parent::getNotif(), 'products' => $getProduct]);
     }
 }

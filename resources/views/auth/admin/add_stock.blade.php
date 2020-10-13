@@ -60,12 +60,18 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <select name="color" class="form-control">
+                                            <div class="row">
                                                 @foreach($colors as $c)
-                                                    <option value="{{ $c->nama_warna }}">{{ $c->nama_warna }}</option>
+                                                    <div class="col-md-4">
+                                                        <div class="form-check">
+                                                            <input type="checkbox" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
+                                                            <br/>
+                                                            <label class="form-check-label" for="{{ $c->nama_warna }}">{{ $c->nama_warna }}</label>
+                                                        </div>
+                                                    </div>
                                                 @endforeach
-                                            </select>
-                                            <p style="color:red;">{{ $errors->first('nama_warna') }}</p>
+                                            </div>
+                                            <p style="color:red;">{{ $errors->first('colors') }}</p>
                                         </div>
 
                                         <div class="col-md-6">

@@ -5,7 +5,7 @@
 @endsection
 
 @section('section')
-    @if(count($data) == 0)
+    @if(count($results) == 0 && $toggle == false)
         @include('template/empty_page', 
             [
                 'target' => 'admin-dash', 
@@ -24,7 +24,7 @@
             <div class="col-md-7" align="right">
                 <form method="post" action="{{ url('/search-order') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="text" name="item" placeholder="Cari Transaksi"/>
+                    <input type="text" name="search" placeholder="Cari Transaksi"/>
                     <button class="btn btn-primary">Cari</button>
                 </form>
             </div>
@@ -42,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($data as $d)
+                        @foreach($results as $d)
                             @php
                                 $details = json_decode($d->items);
                             @endphp
@@ -170,7 +170,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                {{ $data->render() }}
+                {{ $results->render() }}
             </div>
         </div>
     @endif
