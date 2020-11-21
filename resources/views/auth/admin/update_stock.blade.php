@@ -53,7 +53,7 @@
                                             @foreach($colors as $c)
                                                 <div class="col-md-4">
                                                     <div class="form-check">
-                                                        <input {{ in_array($c->nama_warna, $checkedColor) ? 'checked' : '' }} type="checkbox" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
+                                                        <input {{ in_array($c->nama_warna, $checkedColor) ? 'checked' : '' }} type="radio" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
                                                         <br/>
                                                         <label class="form-check-label" for="{{ $c->nama_warna }}">{{ $c->nama_warna }}</label>
                                                     </div>

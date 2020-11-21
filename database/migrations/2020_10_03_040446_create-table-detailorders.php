@@ -1,11 +1,10 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableColors extends Migration
+class CreateTableDetailorders extends Migration
 {
     /**
      * Run the migrations.
@@ -15,9 +14,14 @@ class CreateTableColors extends Migration
     public function up()
     {
         //
-        Schema::create('colors', function(Blueprint $table){
+        Schema::create('detailorders', function(Blueprint $table) {
             $table->id();
-            $table->string('nama_warna');
+            $table->string('nama_produk');
+            $table->integer('qty');
+            $table->integer('berat_produk');
+            $table->string('detail_harga');
+            $table->string('predict_dt_m');
+            $table->string('predict_dt_y');
             $table->timestamps(0);
         });
     }
@@ -30,6 +34,6 @@ class CreateTableColors extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('colors');
+        Schema::dropIfExists('detailorders');
     }
 }

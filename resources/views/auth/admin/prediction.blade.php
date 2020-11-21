@@ -57,11 +57,7 @@
                                 <td>{{ $item->stok }}</td>
                                 <td>{{ $item->harga_produk }}</td>
                                 <td>
-                                    <form method="post" action="{{ url('/predict-action') }}">
-                                        <input type="text" hidden name="_token" value="{{ csrf_token() }}" />      
-                                        <input type="text" hidden name="id" value="{{ $item->id }}" />
-                                        <button class="btn btn-success">Prediksi</button>
-                                    </form>
+                                    <a class="btn btn-success" href="{{ url('/periods') }}/{{ $item->id }}">Prediksi</a>
                                 </td>
                             </tr>
                         @endforeach

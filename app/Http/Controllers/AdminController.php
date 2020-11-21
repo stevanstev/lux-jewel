@@ -4,27 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Ttransaction;
+use App\Pembayaran;
 
-use App\Transaction;
+use App\Order;
 
 use DB;
 
-use App\Product;
+use App\Produk;
 
 use Auth;
 
 use PDF;
 
-use App\Color;
+use App\Warna;
 
-use App\Detail;
+use App\Detailorder;
 
-use App\Prediction;
+use App\Prediksi;
 
-use App\Sender;
+use App\Pengirim;
 
-use App\Categorie;
+use App\Kategori;
 
 use App\Notif;
 
@@ -37,7 +37,7 @@ class AdminController extends GeneralController
     }
 
     public function tambahDetail($id) {
-        $data = Ttransaction::find($id);
+        $data = Pembayaran::find($id);
 
         return view('/auth/admin/update_transcation', ['data' => $data, 'isNotif' => parent::getNotif()]);
     }
@@ -49,7 +49,7 @@ class AdminController extends GeneralController
         $finalRes = ($reason != "") ? "dengan alasan $reason" : "";
 
         if ($choose == "batal") {
-            $model = Ttransaction::find($id);
+            $model = Pembayaran::find($id);
             $notif = new Notif();
             $notif->message = "Transaksi Dibatalkan oleh admin $finalRes";
             $notif->user_id = $model->id_user;
@@ -59,7 +59,7 @@ class AdminController extends GeneralController
             $model->delete();
 
         } else {
-            $model = Ttransaction::find($id);
+            $model = Pembayaran::find($id);
             $model->status_pesanan = 1;
             $model->save();
 
@@ -74,7 +74,7 @@ class AdminController extends GeneralController
     }
 
     public function konfirmasiBayar($id) {
-        $data = Ttransaction::find($id);
+        $data = Pembayaran::find($id);
 
         return view('/auth/admin/konfirmasi_bayar', ['data' => $data, 'isNotif' => parent::getNotif()]);
     }
@@ -91,7 +91,7 @@ class AdminController extends GeneralController
         $id = $request->input('id');
         $nomor_resi = $request->input('nomor_resi');
 
-        $model = Ttransaction::find($id);
+        $model = Pembayaran::find($id);
         $model->status_pesanan = 3;
         $model->no_resi = $nomor_resi;
         $model->save();
@@ -107,18 +107,18 @@ class AdminController extends GeneralController
 
     public function selesaiTransaksi(Request $request) {
         $id = $request->input('id');
-        $tempTransaction = Ttransaction::find($id);
+        $tempTransaction = Pembayaran::find($id);
         $tempTransaction->status_pesanan = 5;
         $tempTransaction->save();
 
         $items = json_decode($tempTransaction->items);
         foreach($items as $key => $value) {
-            $p = Product::find($value->id_produk);
+            $p = Produk::find($value->id_produk);
             $currentStock = $p->stok;
             $p->stok = $currentStock - $value->jumlah;
             $p->save();
 
-            $d = new Detail();
+            $d = new Detailorder();
             $d->nama_produk = $value->nama_produk;
             $d->qty = $value->jumlah;
             $d->berat_produk = $value->berat_produk;
@@ -142,7 +142,7 @@ class AdminController extends GeneralController
         $status_pesanan = 5;
         $biaya_kirim = $tempTransaction->biaya_kirim;
 
-        $model = new Transaction;
+        $model = new Order;
         $model->kota_penerima = $kota_penerima;
         $model->provinsi_penerima = $provinsi_penerima;
         $model->total_transaksi = $total_transaksi;
@@ -162,8 +162,46 @@ class AdminController extends GeneralController
 
     }
 
-    public function variations(){
-        return view('/auth/admin/variations', ['isNotif' => parent::getNotif()]);
+    public function colors() {
+        $data = Warna::paginate(5);
+
+        return view('/auth/admin/colors', ['isNotif' => parent::getNotif(), 'data' => $data]);
+    }
+
+    public function deleteColor(Request $request) {
+        $id = $request->input('id');
+        $color = Warna::find($id);
+        $color->delete();
+
+        return redirect('/colors');
+    }
+
+    public function categories() {
+        $data = Kategori::paginate(5);
+
+        return view('/auth/admin/categories', ['isNotif' => parent::getNotif(), 'data' => $data]);
+    }
+
+    public function deleteCategory(Request $request) {
+        $id = $request->input('id');
+        $color = Kategori::find($id);
+        $color->delete();
+
+        return redirect('/categories');
+    }
+
+    public function deleteSender(Request $request) {
+        $id = $request->input('id');
+        $color = Pengirim::find($id);
+        $color->delete();
+
+        return redirect('/senders');
+    }
+
+    public function senders() {
+        $data = Pengirim::paginate(5);
+
+        return view('/auth/admin/senders', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function addColor(Request $request) {
@@ -176,7 +214,7 @@ class AdminController extends GeneralController
         ])->validate();
 
         $color = $request->input('color');
-        $model = new Color();
+        $model = new Warna();
         $model->nama_warna = $color;
         $model->save();
 
@@ -193,7 +231,7 @@ class AdminController extends GeneralController
         ])->validate();
 
         $kategori = $request->input('kategori');
-        $model = new Categorie();
+        $model = new Kategori();
         $model->nama_kategori = $kategori;
         $model->save();
 
@@ -210,7 +248,7 @@ class AdminController extends GeneralController
         ])->validate();
 
         $sender = $request->input('sender');
-        $model = new Sender();
+        $model = new Pengirim();
         $model->nama_pengirim = $sender;
         $model->save();
 
@@ -223,7 +261,7 @@ class AdminController extends GeneralController
 
     public function pdfGeneratePredict(Request $request) {
         $getNama = $request->query('nama_produk');
-        $getPredict = Prediction::where('hasil', 'like', $getNama.'%')->get();
+        $getPredict = Prediksi::where('hasil', 'like', $getNama.'%')->get();
 
         if (count($getPredict) == 0) {
             return redirect('/p-not-found');
@@ -244,7 +282,7 @@ class AdminController extends GeneralController
         $p_month = ($periode[1] < 10) ? '0'.$periode[1] : $periode[1]; 
         $p_year = $periode[0];
         $concat_p = $p_year.'-'.$p_month;
-        $getProduct = Product::all();
+        $getProduct = Produk::all();
         $obj = new \StdClass();
         $finalData = array();
         foreach ($getProduct as $p) {
@@ -280,7 +318,7 @@ class AdminController extends GeneralController
     }
 
     public function laporanPrediksi(){
-        $getProduct = Product::all();
+        $getProduct = Produk::all();
 
         return view('/auth/admin/laporan_prediksi', ['isNotif' => parent::getNotif(), 'products' => $getProduct]);
     }

@@ -26,7 +26,7 @@ class DetailsSeeder extends Seeder
         	$r_m = rand(0,11);
         	$r_b = rand(0,5);
 
-        	DB::table('details')->insert([
+        	DB::table('detailorders')->insert([
         		'nama_produk' => $nama_produk[$index],
         		'qty' => $qty[$index_qty],
         		'berat_produk' => $berat_produk[$r_b],

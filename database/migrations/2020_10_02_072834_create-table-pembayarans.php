@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableTtransactions extends Migration
+class CreateTablePembayarans extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateTableTtransactions extends Migration
     public function up()
     {
         //
-        Schema::create('ttransactions', function(Blueprint $table) {
+        Schema::create('pembayarans', function(Blueprint $table) {
             $table->id();
             $table->string('kota_penerima');
             $table->integer('id_user');
@@ -44,6 +44,6 @@ class CreateTableTtransactions extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('ttransactions');
+        Schema::dropIfExists('pembayarans');
     }
 }

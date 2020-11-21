@@ -8,11 +8,11 @@ use Auth;
 
 use App\Cart;
 
-use App\Sender;
+use App\Pengirim;
 
-use App\Product;
+use App\Produk;
 
-use App\Ttransaction;
+use App\Pembayaran;
 
 use App\Customer;
 
@@ -72,7 +72,7 @@ class CustomerController extends GeneralController
     public function shopCart() {
         $carts = Cart::where('id_user', Auth::user()->id)->get();
         $jsonItems = json_encode($carts);
-        $sender = Sender::all();
+        $sender = Pengirim::all();
 
         return view('/auth/customer/carts', ['isNotif' => parent::getNotif(),'carts' => $carts, 'jsonItems' => $jsonItems,'sender' => $sender]);
     }
@@ -111,7 +111,7 @@ class CustomerController extends GeneralController
         $no_telepon = Auth::user()->no_hp;
         $alamat_penerima = Auth::user()->alamat;
 
-        $model = new Ttransaction;
+        $model = new Pembayaran;
         $model->kota_penerima = $kota_penerima;
         $model->id_user = $user_id;
         $model->provinsi_penerima = $provinsi_penerima;
@@ -121,7 +121,7 @@ class CustomerController extends GeneralController
         $model->kelurahan_p = $kelurahan_p;
         $model->nama_penerima = $nama_penerima;
         $model->no_telepon = $no_telepon;
-        $model->status_pesanan = 0;
+        $model->status_pesanan = 1;
         $model->alamat_penerima = $alamat_penerima;
         $model->items = $items;
         $model->kurir = $nama_kurir;
@@ -143,13 +143,13 @@ class CustomerController extends GeneralController
     }
 
     public function transactions() {
-        $data = Ttransaction::where('id_user', Auth::user()->id)->paginate(10);
+        $data = Pembayaran::where('id_user', Auth::user()->id)->paginate(10);
 
         return view('/auth/customer/transactions', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function uploadBukti($id) {
-        $data = Ttransaction::find($id);
+        $data = Pembayaran::find($id);
 
         return view('/auth/customer/upload_bukti', ['isNotif' => parent::getNotif(),'data' => $data]);
     }
@@ -177,7 +177,7 @@ class CustomerController extends GeneralController
 
         $id = $request->input('id');
 
-        $model = Ttransaction::find($id);
+        $model = Pembayaran::find($id);
         $model->bukti_pembayaran = $bukti->getClientOriginalName();
         if(!empty($nama_penerima)) {
             $model->nama_penerima = $nama_penerima;
@@ -222,7 +222,7 @@ class CustomerController extends GeneralController
 
     public function konfirmasiSampai(Request $request) {
         $id = $request->input('id');
-        $model = Ttransaction::find($id);
+        $model = Pembayaran::find($id);
         $model->status_pesanan = 4;
         $model->save();
 
@@ -238,9 +238,9 @@ class CustomerController extends GeneralController
     }
 
     public function itemDetails($id) {
-        $products = Product::find($id);
+        $products = Produk::find($id);
         $colors = json_decode($products->color);
-        $related = Product::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
+        $related = Produk::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
 
         return view('/auth/customer/detail_page', ['isNotif' => parent::getNotif(), 'products' => $products, 'related' => $related, 'colors' => $colors]);
     }

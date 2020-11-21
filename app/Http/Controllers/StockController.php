@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Product;
-use App\Color;
-use App\Sender;
-use App\Categorie;
+use App\Produk;
+use App\Warna;
+use App\Pengirim;
+use App\Kategori;
 
 use App\Notif;
 
@@ -19,15 +19,15 @@ use Illuminate\Support\Facades\Validator;
 class StockController extends GeneralController
 {
     public function index() {
-        $products = Product::paginate(10);
+        $products = Produk::paginate(10);
 
         return view('auth/admin/stock', ['isNotif' => $isNotif, 'products' => $products]);
     }
 
     public function add() {
-        $colors = Color::all();
-        $categories = Categorie::all();
-        $senders = Sender::all();
+        $colors = Warna::all();
+        $categories = Kategori::all();
+        $senders = Pengirim::all();
 
         return view('auth/admin/add_stock', ['isNotif' => parent::getNotif(), 'colors' => $colors, 'categories' => $categories, 'senders' => $senders]);
     }
@@ -69,7 +69,7 @@ class StockController extends GeneralController
 
         $foto->move("img/product/",$foto->getClientOriginalName());
 
-        $model = new Product;
+        $model = new Produk;
         $model->nama_produk = $nama_produk;
         $model->berat_produk = $berat_produk;
         $model->foto = $foto->getClientOriginalName();
@@ -84,9 +84,9 @@ class StockController extends GeneralController
     }
 
     public function update($id) {
-        $product = Product::find($id);
-        $colors = Color::all();
-        $categories = Categorie::all();
+        $product = Produk::find($id);
+        $colors = Warna::all();
+        $categories = Kategori::all();
         $checkedColor = json_decode($product->color);
 
         return view('auth/admin/update_stock', ['isNotif' => parent::getNotif(),'products' => $product, 'colors' => $colors, 'categories' => $categories, 'checkedColor' => $checkedColor]);
@@ -125,7 +125,7 @@ class StockController extends GeneralController
         $colors = $request->input('colors');
         $kategori = $request->input('kategori');
 
-        $model = Product::find($id);
+        $model = Produk::find($id);
         $model->nama_produk = $nama_produk;
         $model->berat_produk = $berat_produk;
         if($foto != NULL){
@@ -144,7 +144,7 @@ class StockController extends GeneralController
 
     public function delete(Request $request) {
         $id = $request->input('id');
-        $product = Product::find($id);
+        $product = Produk::find($id);
         $product->delete();
 
         return redirect('/stock');

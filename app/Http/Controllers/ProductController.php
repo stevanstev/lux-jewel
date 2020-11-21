@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Product;
+use App\Produk;
 
 class ProductController extends Controller
 {
@@ -13,8 +13,8 @@ class ProductController extends Controller
     }
 
     public function details($id) {
-        $products = Product::find($id);
-        $related = Product::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
+        $products = Produk::find($id);
+        $related = Produk::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
 
         return view('/guest/detail_page', ['products' => $products, 'related' => $related]);
     }

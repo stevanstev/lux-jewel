@@ -49,7 +49,13 @@
                                 <li class="{{ Request::path() == 'admin-dash' ? 'active' : '' }}"><a href="{{ url('/admin-dash') }}">Home</a></li>
                                 <li class="{{ Request::path() == 'order' ? 'active' : '' }}"><a href="{{ url('/order') }}">Order List</a></li>
                                 <li class="{{ Request::path() == 'stock' ? 'active' : '' }}"><a href="{{ url('/stock') }}">Stock</a></li>
-                                <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/variations') }}">Variations</a></li>
+                                <li><a href="#">Variations</a>
+                                    <ul class="dropdown">
+                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/colors') }}">Warna</a></li>
+                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/categories') }}"">Kategori</a></li>
+                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/senders') }}"">Pengiriman</a></li>
+                                    </ul>
+                                </li>
                                 <li class="{{ Request::path() == 'prediction' ? 'active' : '' }}"><a href="{{ url('/prediction') }}">Prediction</a></li>
                                 <li class="{{ Request::path() == 'history' ? 'active' : '' }}"><a href="{{ url('/history') }}">History</a></li>
                             @else

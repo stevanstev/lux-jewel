@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ttransaction extends Model
+class Pembayaran extends Model
 {
     //
 }

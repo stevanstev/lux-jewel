@@ -61,10 +61,19 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/prediction', 'PredictionController@index');
             Route::post('/predict-action', 'PredictionController@predict');
+            Route::post('/predict-by-periods', 'PredictionController@predictByPeriods');
 
-            Route::get('/variations', 'AdminController@variations');
+            // Route::get('/variations', 'AdminController@variations');
+            Route::get('/colors', 'AdminController@colors');
+            Route::post('/color-delete', 'AdminController@deleteColor');
             Route::post('/add-color', 'AdminController@addColor');
+
+            Route::get('/categories', 'AdminController@categories');
+            Route::post('/category-delete', 'AdminController@deleteCategory');
             Route::post('/add-kategori', 'AdminController@addCategorie');
+
+            Route::get('/senders', 'AdminController@senders');
+            Route::post('/sender-delete', 'AdminController@deleteSender');
             Route::post('/add-sender', 'AdminController@addSender');
 
             Route::get('/delete-notifs/{id}', 'GeneralController@deleteNotif');
@@ -77,6 +86,8 @@ Route::group(['middleware' => 'web'], function() {
             Route::get('/laporan-prediksi', 'AdminController@laporanPrediksi');
 
             Route::get('/p-not-found', 'AdminController@pNotFound');
+
+            Route::get('/periods/{id}', 'PredictionController@periods');
 
             searchRouting(array('a-stock', array('/stock', '/search-stock')), array('a-search-stock', '/search-stock'));
             searchRouting(array('a-history', array('/history', '/search-history')), array('a-search-history', '/search-history'));

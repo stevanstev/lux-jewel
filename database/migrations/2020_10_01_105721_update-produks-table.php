@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableSenders extends Migration
+class UpdateProduksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,10 @@ class CreateTableSenders extends Migration
     public function up()
     {
         //
-        Schema::create('senders', function(Blueprint $table) {
-            $table->id();
-            $table->string('nama_pengirim');
-            $table->timestamps(0);
-        }); 
+        Schema::table('produks', function(Blueprint $table) {
+            $table->text('color');
+            $table->string('kategori');
+        });
     }
 
     /**
@@ -29,6 +28,6 @@ class CreateTableSenders extends Migration
     public function down()
     {
         //
-        Schema::dropIfExists('senders');
+        Schema::dropIfExists('produks');
     }
 }

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sender extends Model
+class Prediksi extends Model
 {
     //
 }

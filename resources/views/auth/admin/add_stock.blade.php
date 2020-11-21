@@ -30,41 +30,48 @@
                                     <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <p>Nama Produk</p>
                                             <input value="{{ old('nama_produk') }}" type="text" name="nama_produk" placeholder="Nama produk">
                                             <p style="color:red;">{{ $errors->first('nama_produk') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Berat Produk</p>
                                             <input value="{{ old('berat_produk') }}" type="text" placeholder="Berat produk" name="berat_produk">
                                             <p style="color:red;">{{ $errors->first('berat_produk') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Foto</p>
                                             <input type="file" placeholder="Foto" name="foto">
                                             <p style="color:red;">{{ $errors->first('foto') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Stok Produk</p>
                                             <input value="{{ old('stok') }}" type="text" placeholder="Stok" name="stok">
                                             <p style="color:red;">{{ $errors->first('stok') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Harga Produk</p>
                                             <input type="text" value="{{ old('harga_produk') }}" placeholder="Harga produk" name="harga_produk">
                                             <p style="color:red;">{{ $errors->first('harga_produk') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Deskripsi</p>
                                             <input type="text" value="{{ old('deskripsi') }}" placeholder="Deskripsi" name="deskripsi">
                                             <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Warna Produk</p>
                                             <div class="row">
                                                 @foreach($colors as $c)
                                                     <div class="col-md-4">
                                                         <div class="form-check">
-                                                            <input type="checkbox" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
+                                                            <input type="radio" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
                                                             <br/>
                                                             <label class="form-check-label" for="{{ $c->nama_warna }}">{{ $c->nama_warna }}</label>
                                                         </div>
@@ -75,6 +82,7 @@
                                         </div>
 
                                         <div class="col-md-6">
+                                            <p>Kategori</p>
                                             <select name="kategori" class="form-control">
                                                 @foreach($categories as $ct)
                                                     <option value="{{ $ct->nama_kategori }}">{{ $ct->nama_kategori }}</option>

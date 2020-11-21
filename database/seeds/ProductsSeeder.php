@@ -20,7 +20,7 @@ class ProductsSeeder extends Seeder
         $kategoris = ['Ring', 'Necklace'];
 
         for ($i = 0 ; $i < 20 ; $i++) {
-        	DB::table('products')->insert([
+        	DB::table('produks')->insert([
         		'nama_produk' => $products[$i],
         		'berat_produk' => $berat_produk[rand(0, 6)],
         		'foto' => '#',
