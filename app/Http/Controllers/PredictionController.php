@@ -118,11 +118,15 @@ class PredictionController extends GeneralController
 		Validator::make($request->all(), 
 		[
 			'from' => 'required',
-			'to' => 'required'
+			'to' => 'required',
+			'to_y' => 'gt:from_y',
+			'from_y' => 'lt:to_y',
 		], 
 		[
-				'from.required' => 'Dari tidak boleh kosong',
-				'to.required' => 'Sampai tidak boleh kosong'
+			'to_y.gt' => 'Tahun dari tidak boleh lebih besar dari tahun sampai',
+			'from_y.lt' => 'Tahun sampai tidak boleh lebih kecil dari tahun dari',
+			'from.required' => 'Dari tidak boleh kosong',
+			'to.required' => 'Sampai tidak boleh kosong'
 		])->validate(); 
 
     	$from = $request->input('from');

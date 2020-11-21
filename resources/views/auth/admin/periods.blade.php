@@ -24,16 +24,22 @@
                                     <p style="color:red;">{{ $errors->first('nama_produk') }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <input data-provide="datepicker" type="text" data-date-format="mm/dd/yyyy" value="{{ old('from') }}" class="datepicker" id="datepicker1" name="from" placeholder="Dari">
+                                    <input data-provide="datepicker" onchange="fromY(this.value)" type="text" data-date-format="mm/dd/yyyy" value="{{ old('from') }}" class="datepicker" id="datepicker1" name="from" placeholder="Dari">
+                                    <input hidden type="text" name="from_y" class="from_y" value="{{ old('from_y') }}"/>
                                     <p style="color:red;">{{ $errors->first('from') }}</p>
                                 </div>
                                 <div class="col-md-6">
-                                    <input data-provide="datepicker" value="{{ old('to') }}" type="text" data-date-format="mm/dd/yyyy" class="datepicker" id="datepicker2" name="to" placeholder="Sampai">
+                                    <input data-provide="datepicker" onchange="toY(this.value)" value="{{ old('to') }}" type="text" data-date-format="mm/dd/yyyy" class="datepicker" id="datepicker2" name="to" placeholder="Sampai">
+                                    <input hidden type="text" name="to_y" class="to_y" value="{{ old('to_y') }}"/>
                                     <p style="color:red;">{{ $errors->first('to') }}</p>
                                 </div>
 
                                 <div class="col-md-12" align="center">
                                     <button type="submit" class="site-btn">Prediksi</button>
+                                </div>
+
+                                <div class="col-md-12" align="center">
+                                    <p style="color:red;">{{ $errors->first('from_y') }}</p>
                                 </div>
                             </div>
                         </form>
@@ -68,5 +74,17 @@
         $('.next i').removeClass();
         $('.next i').addClass("fa fa-chevron-right");
     });
+
+    function fromY(v){
+        let splitV = v.split("/")[2];
+        let year = splitV[2] + splitV[3];
+        $(".from_y").attr('value', year);
+    }
+
+    function toY(v){
+        let splitV = v.split("/")[2];
+        let year = splitV[2] + splitV[3];
+        $(".to_y").attr('value', year);
+    }
 </script>
 @endsection
