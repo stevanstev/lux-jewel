@@ -29,172 +29,19 @@ class PredictionController extends GeneralController
         return view('/auth/admin/prediction', ['products' => $products, 'isNotif' => parent::getNotif()]);
     }
 
-    public function predict(Request $request){
-        $id = $request->input('id');
-        
-        $currentDate = Carbon::now();
-        $currentDate = $currentDate->toDateTimeString();
-        $getDTM = Date('n');
-        $getDTY = Date('y');
-
-        // perhitungan
-        $periodePenjualan = array(1,2,3,4,5,6,7,8,9,10,11,12);
-        $tsquare = array_map(function($p){ return $p**2; }, $periodePenjualan);
-        $penjualan = array();
-
-        $data = Produk::find($id);
-        $nama_produk = $data->nama_produk;
-
-        for($i = 0 ; $i < sizeof($periodePenjualan); $i++) {
-            $m = $getDTM - $periodePenjualan[$i];
-            $m = strval($m);
-            $y = strval($getDTY);
-
-            if (intval($m) == 0) {
-            	$getDTY = $getDTY - 1;
-            	$getDTM = 22;
-
-            	$m = $getDTM - $periodePenjualan[$i];
-            	$m = strval($m);
-            	$y = strval($getDTY);
-            }
-
-            $enumData = DB::select("SELECT COUNT(qty) as total FROM detailorders WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
-            
-            if ($enumData == "") {
-            	array_push($penjualan, 0);
-            } else {
-            	array_push($penjualan, $enumData[0]->total);
-            }
-        }
-
-        $count_periode = array_sum($periodePenjualan);
-        $count_periode_square = $count_periode ** 2;
-        $count_tsquare = array_sum($tsquare);
+	/**
+	* @param int $periode
+	* @param int $countTSquare
+	* @param array $penjualan
+	* @return array
+	*/
+	public function linearRegression($totalPeriode = 0, $countTSquare = 0, $penjualan = []){
+		$count_periode_square = $totalPeriode ** 2;	
         $count_penjualan = array_sum($penjualan);
-        $count_t_y = $count_periode * $count_penjualan;
-        $n = 12;
-        $b = (($n*$count_t_y) - ($count_periode * $count_penjualan)) / (($n*$count_tsquare) - ($count_periode_square));
-        $a = (($count_penjualan - ($b * $count_periode)) / $n);
-        $t = 13;
-        $prediction_formula = $a + ($b * $t);
-        $mad = function($array, $prediction) {
-            $result = array();
-
-            foreach($array as $a) {
-                array_push($result, round(abs($a - $prediction), 6));
-            }
-            
-            return $result;
-        };
-
-        $mad_map = $mad($penjualan, $prediction_formula);
-        $mad_result = array_sum($mad_map);
-        $mad_result = $mad_result / $n;
-
-        $mse_squaring = array_map(function($val) { return $val ** 2; },$mad_map);
-        $mse_result = array_sum($mse_squaring);
-        $mse = round( $mse_result / $n , 6);
-
-        $prediction = new Prediksi();
-        $prediction->tgl_prediksi = date('Y-m-d H:i:s');
-        $prediction->hasil = $nama_produk.'#'.strval(floor($prediction_formula));
-        $prediction->mse = $mse;
-        $prediction->mad = $mad_result;
-        $prediction->save();
-
-        $result = [
-            'value' => floor($prediction_formula),
-            'nama_produk' => $nama_produk,
-            'isNotif' => parent::getNotif(),
-            'mad' => $mad_result,
-            'mse' => $mse,
-        ];
-
-        return view('/auth/admin/predict_result', $result);
-    }
-
-    public function predictByPeriods(Request $request) {
-		Validator::make($request->all(), 
-		[
-			'from' => 'required',
-			'to' => 'required',
-			'to_y' => 'gt:from_y',
-			'from_y' => 'lt:to_y',
-		], 
-		[
-			'to_y.gt' => 'Tahun dari tidak boleh lebih besar dari tahun sampai',
-			'from_y.lt' => 'Tahun sampai tidak boleh lebih kecil dari tahun dari',
-			'from.required' => 'Dari tidak boleh kosong',
-			'to.required' => 'Sampai tidak boleh kosong'
-		])->validate(); 
-
-    	$from = $request->input('from');
-       	$to = $request->input('to');
-       	$produk_id = $request->input('id');
-       	// $produk_id = 4;
-
-        $periode = array();
-        $penjualan = array();
-        $periodeTimesPenjualan = array();
-
-       	$from = explode('/', $from);
-       	$to = explode('/', $to);
-
-       	$fromMonth = $from[0];
-       	$toMonth = $to[0];
-
-		$fromYear = $from[2];
-		$fromYearSplit = $fromYear[2].$fromYear[3];
-		
-		$toYear = $to[2];
-		$toYearSplit = $toYear[2].$toYear[3];
-
-		$totalPeriode = 1;
-
-		for ($y = $fromYearSplit ; $y <= $toYearSplit ; $y++) {
-			for ($m = $fromMonth; $m <= 12 ; $m++) {
-				if ($m == $toMonth && $y == $toYearSplit) {
-					array_push($periode, $m.'-'.$y);
-					break;
-				} else {
-					array_push($periode, $m.'-'.$y);
-				}
-				$totalPeriode++;
-			}
-			$fromMonth = 1;
-			$fromYear++;
-		}
-
-		//Total periode (n)
-		$sizeOfPeriode = sizeof($periode);
-		$data = Produk::find($produk_id);
-        $nama_produk = $data->nama_produk;
-
-		for ($i = 0 ; $i < $sizeOfPeriode ; $i++) {
-			$splitPeriode = explode('-', $periode[$i]);
-			$m = $splitPeriode[0];
-			$y = $splitPeriode[1];
-			$enumData = DB::select("SELECT COUNT(qty) as total FROM detailorders WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
-
-			if ($enumData == "") {
-            	array_push($penjualan, 0);
-            } else {
-            	array_push($penjualan, $enumData[0]->total);
-            }
-		}
-
-		$count_periode = $sizeOfPeriode;
-		$count_periode_square = $count_periode ** 2;
-		$count_tsquare = 0;
-		for ($i = 1 ; $i <= $totalPeriode ; $i++) {
-			$count_tsquare += $i ** 2; 
-		}
-        $count_penjualan = array_sum($penjualan);
-		$count_t_y = $count_periode * $count_penjualan;
-		$rightCalculation = ($totalPeriode*$count_tsquare) - ($count_periode_square);
-		$b = (($totalPeriode*$count_t_y) - ($count_periode * $count_penjualan)) / (($rightCalculation == 0) ? 1 : $rightCalculation);
-		$a = (($count_penjualan - ($b * $count_periode)) / $totalPeriode);
+		$count_t_y = $totalPeriode * $count_penjualan;
+		$rightCalculation = ($totalPeriode*$countTSquare) - ($count_periode_square);
+		$b = (($totalPeriode*$count_t_y) - ($totalPeriode * $count_penjualan)) / (($rightCalculation == 0) ? 1 : $rightCalculation);
+		$a = (($count_penjualan - ($b * $totalPeriode)) / $totalPeriode);
 		$t = $totalPeriode + 1;
 		$prediction_formula = $a + ($b * $t);
 		
@@ -216,20 +63,149 @@ class PredictionController extends GeneralController
         $mse_result = array_sum($mse_squaring);
 		$mse = round( $mse_result / $totalPeriode , 6);
 
+		return array($prediction_formula, $mad_result, $mse);
+	}
+
+    public function predictByPeriods(Request $request) {
+		Validator::make($request->all(), 
+		[
+			'from' => 'required',
+			'to' => 'required',
+		], 
+		[
+			'from.required' => 'Dari tidak boleh kosong',
+			'to.required' => 'Sampai tidak boleh kosong'
+		])->validate(); 
+
+    	$from = $request->input('from');
+       	$to = $request->input('to');
+		$produk_id = $request->input('id');
+
+		// Change date format from mm/dd/yyyy to yyyy-mm-dd
+		$customFormatDate = function($date) {
+			$newDate = str_replace('/', '-', $date);
+			$newDate = substr($newDate, 6).'-'.substr($newDate, 0, 5);
+
+			return $newDate;
+		};
+
+		$from = $customFormatDate($from);
+		$to = $customFormatDate($to);
+
+		// initial value
+		$penjualan = array();
+		$totalPeriode = 0;
+		$count_tsquare = 0;
+		$data = Produk::find($produk_id);
+		$nama_produk = $data->nama_produk;
+
+		$queryGetData = "SELECT qty FROM detailorders WHERE created_at BETWEEN '$from' and '$to' and nama_produk='$nama_produk' order by created_at desc";
+		$result = DB::select($queryGetData);
+		$totalPeriode = sizeof($result);
+		for ($i = 1 ; $i <= $totalPeriode ; $i++) {
+			$count_tsquare += $i ** 2; 
+		}
+		foreach($result as $key => $value) {
+			array_push($penjualan, $value->qty);
+		}
+
+		$linearRegress = $this->linearRegression($totalPeriode, $count_tsquare, $penjualan);
+
 		$result = [
-            'value' => floor($prediction_formula),
+            'value' => floor($linearRegress[0]),
             'nama_produk' => $nama_produk,
             'isNotif' => parent::getNotif(),
-            'mad' => $mad_result,
-            'mse' => $mse,
+            'mad' => $linearRegress[1],
+            'mse' => $linearRegress[2],
+        ];
+
+        return view('/auth/admin/predict_result', $result);
+    }
+
+    public function predictByMonths(Request $request) {
+		Validator::make($request->all(), 
+		[
+			'from_m_m' => 'required',
+			'from_m_y' => 'required',
+			'to_m_y' => 'required',
+			'to_y_m' => 'required',
+		], 
+		[
+			'from_m_m.required' => 'Bulan dari tidak boleh kosong',
+			'from_m_y.required' => 'Tahun dari tidak boleh kosong',
+			'to_m_y.required' => 'Bulan sampai tidak boleh kosong',
+			'to_y_m.required' => 'Tahun sampai tidak boleh kosong'
+		])->validate(); 
+
+    	$fromMonth = $request->input('from_m_m');
+       	$fromYear = $request->input('from_m_y');
+       	$toMonth = $request->input('to_m_y');
+		$toYear = $request->input('to_y_m');
+		$produk_id = $request->input('id');
+
+        $periode = array();
+        $penjualan = array();
+		$periodeTimesPenjualan = array();
+		
+		$fromYearSplit = substr($fromYear, 2);
+		$toYearSplit = substr($toYear, 2);
+
+		$totalPeriode = 1;
+
+		for ($y = $fromYearSplit ; $y <= $toYearSplit ; $y++) {
+			for ($m = $fromMonth; $m <= 12 ; $m++) {
+				if ($m == $toMonth && $y == $toYearSplit) {
+					array_push($periode, $m.'-'.$y);
+					break;
+				} else {
+					array_push($periode, $m.'-'.$y);
+				}
+				$totalPeriode++;
+			}
+			$fromMonth = 1;
+			$fromYear++;
+		}
+
+		$count_tsquare = 0;
+		for ($i = 1 ; $i <= $totalPeriode ; $i++) {
+			$count_tsquare += $i ** 2; 
+		}
+
+		//Total periode (n)
+		$sizeOfPeriode = sizeof($periode);
+		$data = Produk::find($produk_id);
+		$nama_produk = $data->nama_produk;
+
+		for ($i = 0 ; $i < $sizeOfPeriode ; $i++) {
+			$splitPeriode = explode('-', $periode[$i]);
+			$m = $splitPeriode[0];
+			$y = $splitPeriode[1];
+			$enumData = DB::select("SELECT COUNT(qty) as total FROM detailorders WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
+
+			if ($enumData == "") {
+            	array_push($penjualan, 0);
+            } else {
+            	array_push($penjualan, $enumData[0]->total);
+            }
+		}
+		
+		$prediction_result = $this->linearRegression($totalPeriode, $count_tsquare, $penjualan);
+
+		$result = [
+            'value' => floor($prediction_result[0]),
+            'nama_produk' => $nama_produk,
+            'isNotif' => parent::getNotif(),
+            'mad' => $prediction_result[1],
+            'mse' => $prediction_result[2],
         ];
 
         return view('/auth/admin/predict_result', $result);
     }
 
     public function periods($id) {
-        $data = Produk::find($id);
+		$data = Produk::find($id);
+		$monthPredictionRange = 2000;
 
-        return view('/auth/admin/periods', ['id' => $id, 'isNotif' => parent::getNotif(), 'data' => $data]);
+        return view('/auth/admin/periods', ['id' => $id, 'isNotif' => parent::getNotif(), 'data' => $data, 'monthPredictionRange' => $monthPredictionRange]);
     }
 }

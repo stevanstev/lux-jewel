@@ -57,11 +57,16 @@ Route::group(['middleware' => 'web'], function() {
             Route::get('/konfirmasi-bayar/{id}', 'AdminController@konfirmasiBayar');
             Route::post('/konfirmasi-bayar-action', 'AdminController@konfirmasiBayarAction');
 
+            Route::get('/kirim-resi/{id}', 'AdminController@kirimResi');
+            Route::post('/kirim-resi-action', 'AdminController@kirimResiAction');
+
             Route::post('/selesai-transaksi', 'AdminController@selesaiTransaksi');
 
             Route::get('/prediction', 'PredictionController@index');
             Route::post('/predict-action', 'PredictionController@predict');
             Route::post('/predict-by-periods', 'PredictionController@predictByPeriods');
+
+            Route::post('/predict-by-months', 'PredictionController@predictByMonths');
 
             // Route::get('/variations', 'AdminController@variations');
             Route::get('/colors', 'AdminController@colors');

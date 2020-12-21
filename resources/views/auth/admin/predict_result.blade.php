@@ -12,9 +12,7 @@
                     <div class="card">
                         <div class="card-body cart">
                             <div class="col-sm-12 empty-cart-cls text-center"> <img src="{{ url('img/others/predict.png') }}" width="100" height="100" class="img-fluid mb-4 mr-3">
-                                <h3><strong>Prediksi Penjualan Periode ke 13 untuk {{ $nama_produk }}</strong></h3>
-                                <br/>
-                                <h4>Berdasarkan Data Penjualan 12 Bulan Sebelumnya</h4>
+                                <h3><strong>Prediksi Penjualan Periode selanjutnya untuk {{ $nama_produk }}</strong></h3>
                                 <br/>
                                 <h4>Stock Item: {{ $value }}</h4>
                                 <br/>

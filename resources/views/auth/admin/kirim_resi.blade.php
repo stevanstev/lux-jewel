@@ -1,7 +1,7 @@
 @extends('template/container', ['show' => false])
 
 @section('title')
-    Konfirmasi Pembayaran
+    Kirim nomor resi
 @endsection
 
 @section('section')
@@ -12,27 +12,17 @@
                 <div class="col-lg-8 col-md-8">
                     <div class="contact__content">
                         <div class="contact__address">
-                            <h5>Konfirmasi Pembayaran</h5>
+                            <h5>Kirim Nomor Resi</h5>
                         </div>
                         <div class="contact__form">
-                            <form action="{{ url('/konfirmasi-bayar-action') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ url('/kirim-resi-action') }}" method="post" enctype="multipart/form-data">
                                 <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
                                 <input type="text" hidden name="id" value="{{ $data->id }}"/>
                                 <div class="row">
-                                    <div class="col-md-12" align="center">
-                                        <img width="400" src="{{ url('img/proves') }}/{{ str_replace(' ', '%20', $data->bukti_pembayaran) }}" />
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <br/>
-                                    </div>
-
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8">
-                                        <select name="konfirmasi" class="form-control"> 
-                                            <option value="true">Terima</option>
-                                            <option value="false">Tolak</option>
-                                        </select>
+                                        <input type="text" name="nomor_resi" placeholder="Nomor Resi">
+                                        <p style="color:red;">{{ $errors->first('nomor_resi') }}</p>
                                     </div>
                                     <div class="col-md-2"></div>
 
@@ -41,7 +31,7 @@
                                         <br/>
                                     </div>
                                     <div class="col-md-12" align="center">
-                                        <button type="submit" class="site-btn">Konfirmasi</button>
+                                        <button type="submit" class="site-btn">Kirim Nomor Resi</button>
                                     </div>
                                 </div>
                             </form>

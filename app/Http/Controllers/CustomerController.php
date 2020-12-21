@@ -223,7 +223,7 @@ class CustomerController extends GeneralController
     public function konfirmasiSampai(Request $request) {
         $id = $request->input('id');
         $model = Pembayaran::find($id);
-        $model->status_pesanan = 4;
+        $model->status_pesanan = 5;
         $model->save();
 
         $getAdmin = Customer::where('role', 1)->first();

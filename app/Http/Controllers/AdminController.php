@@ -79,7 +79,13 @@ class AdminController extends GeneralController
         return view('/auth/admin/konfirmasi_bayar', ['data' => $data, 'isNotif' => parent::getNotif()]);
     }
 
-    public function konfirmasiBayarAction(Request $request) {
+    public function kirimResi($id) {
+        $data = Pembayaran::find($id);
+
+        return view('/auth/admin/kirim_resi', ['data' => $data, 'isNotif' => parent::getNotif()]);
+    }
+
+    public function kirimResiAction(Request $request) {
         Validator::make($request->all(),
         [
             'nomor_resi' => 'required'
@@ -92,12 +98,12 @@ class AdminController extends GeneralController
         $nomor_resi = $request->input('nomor_resi');
 
         $model = Pembayaran::find($id);
-        $model->status_pesanan = 3;
+        $model->status_pesanan = 4;
         $model->no_resi = $nomor_resi;
         $model->save();
 
         $notif = new Notif();
-        $notif->message = "Transaksi Diterima, Nomor resi anda adalah $nomor_resi";
+        $notif->message = "Nomor resi untuk order dengan ID $id : $nomor_resi";
         $notif->user_id = $model->id_user;
         $notif->notif_active = 1;
         $notif->save();
@@ -105,10 +111,39 @@ class AdminController extends GeneralController
         return redirect('/order');
     }
 
+    public function konfirmasiBayarAction(Request $request) {
+        $id = $request->input('id');
+        $konfirmasi = $request->input('konfirmasi');
+
+        if ($konfirmasi == "true") {
+            $model = Pembayaran::find($id);
+            $model->status_pesanan = 3;
+            $model->save();
+
+            $notif = new Notif();
+            $notif->message = "Bukti Pembayaran diterima, mohon menunggu nomor resi";
+            $notif->user_id = $model->id_user;
+            $notif->notif_active = 1;
+            $notif->save();
+        } else {
+            $model = Pembayaran::find($id);
+            $model->status_pesanan = 1;
+            $model->save();
+
+            $notif = new Notif();
+            $notif->message = "Bukti Pembayaran ditolak, mohon unggah bukti pembayaran yang valid";
+            $notif->user_id = $model->id_user;
+            $notif->notif_active = 1;
+            $notif->save();
+        }
+
+        return redirect('/order');
+    }
+
     public function selesaiTransaksi(Request $request) {
         $id = $request->input('id');
         $tempTransaction = Pembayaran::find($id);
-        $tempTransaction->status_pesanan = 5;
+        $tempTransaction->status_pesanan = 6;
         $tempTransaction->save();
 
         $items = json_decode($tempTransaction->items);

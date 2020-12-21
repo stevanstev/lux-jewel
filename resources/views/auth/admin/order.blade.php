@@ -92,12 +92,18 @@
                                     @php
                                         } else if($d->status_pesanan == 3) {
                                     @endphp 
-                                        <a href="#" type="button" class="btn btn-success">
-                                            Menunggu Penerimaan
+                                        <a href="{{ url('/kirim-resi') }}/{{ $d->id }}" type="button" class="btn btn-success">
+                                            Input Nomor Resi
                                         </a>
                                     @php
                                         } else if($d->status_pesanan == 4){
                                     @endphp
+                                        <a href="#" type="button" class="btn btn-success">
+                                            Menunggu konfirmasi barang
+                                        </a>
+                                    @php
+                                        } else if($d->status_pesanan == 5){
+                                    @endphp 
                                         <form method="post" action="{{ url('/selesai-transaksi') }}">
                                             <input type="hidden" name="id" value="{{ $d->id }}" />
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -105,9 +111,9 @@
                                         <form>
                                     @php
                                         } else {
-                                    @endphp 
+                                    @endphp
                                         -
-                                    @php
+                                    @php    
                                         }
                                     @endphp
                                 </td>
