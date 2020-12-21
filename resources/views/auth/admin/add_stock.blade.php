@@ -69,7 +69,7 @@
                                             <p>Warna Produk</p>
                                             <div class="row">
                                                 @foreach($colors as $c)
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-4 color__checkbox">
                                                         <div class="form-check">
                                                             <input type="radio" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
                                                             <br/>
