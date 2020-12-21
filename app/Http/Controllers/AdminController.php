@@ -33,7 +33,38 @@ use Illuminate\Support\Facades\Validator;
 class AdminController extends GeneralController
 {
     public function index() {
-        return view('/auth/admin/home', ['isNotif' => parent::getNotif()]);
+        $model = DB::select('select * from pembayarans limit 5');
+        $data = new \StdClass;
+
+        $notSend = 0;
+        $alreadySend = 0;
+        $finish = 0;
+
+        //3 -> belum dikirim
+        //4 -> sudah dikirim
+        //6 -> sudah selesai
+
+        foreach($model as $key => $value) {
+            switch($value->status_pesanan){ 
+                case 3:
+                    $notSend++;
+                    break;
+                case 4:
+                    $alreadySend++;
+                    break;
+                case 6:
+                    $finish++;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $data->notSend = $notSend;
+        $data->alreadySend = $alreadySend;
+        $data->finish = $finish;
+
+        return view('/auth/admin/home', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function tambahDetail($id) {
@@ -50,6 +81,7 @@ class AdminController extends GeneralController
 
         if ($choose == "batal") {
             $model = Pembayaran::find($id);
+
             $notif = new Notif();
             $notif->message = "Transaksi Dibatalkan oleh admin $finalRes";
             $notif->user_id = $model->id_user;
@@ -127,6 +159,14 @@ class AdminController extends GeneralController
             $notif->save();
         } else {
             $model = Pembayaran::find($id);
+            $items = json_decode($model->items);
+
+            foreach($items as $key => $value) {
+                $product_model = Produk::find($value->id_produk);
+                $product_model->stok = $product_model->stok + $value->jumlah;
+                $product_model->save();
+            }
+
             $model->status_pesanan = 1;
             $model->save();
 

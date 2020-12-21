@@ -19,6 +19,7 @@
                             <form action="{{ url('/upload-bukti-action') }}" method="post" enctype="multipart/form-data">
                                 <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
                                 <input type="text" hidden name="id" value="{{ $data->id }}"/>
+                                <input type="text" hidden name="items" value="{{ $data->items }}" />
                                 <div class="row">
                                     <div class="col-md-1"></div>
                                     <div class="col-md-10">

@@ -100,6 +100,7 @@ class CustomerController extends GeneralController
         $nama_kurir = $request->input('nama-kurir');
         $user_id = Auth::user()->id;
         $items = $request->input('jsonItems');
+
         $kota_penerima = Auth::user()->kota;
         $provinsi_penerima = Auth::user()->provinsi;
         $total_transaksi = $request->input('total_transaksi');
@@ -166,6 +167,14 @@ class CustomerController extends GeneralController
 
         $bukti = $request->file('bukti');
         $bukti->move("img/proves/",$bukti->getClientOriginalName());
+
+        $items = json_decode($request->input('items'));
+
+        foreach($items as $key => $value) {
+            $model = Produk::find($value->id_produk);
+            $model->stok = $model->stok - $value->jumlah;
+            $model->save();
+        }
 
         $nama_penerima = $request->input('nama_penerima');
         $kota_penerima = $request->input('kota_penerima');

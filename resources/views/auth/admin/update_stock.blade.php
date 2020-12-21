@@ -20,35 +20,31 @@
                                 <input type="text" hidden name="id" value="{{ $products->id }}"/>
                                 <div class="row">
                                     <div class="col-md-6">
+                                        <span>Nama Produk</span>
+                                        <p></p>
                                         <input value="{{ $products->nama_produk }}" type="text" name="nama_produk" placeholder="Nama produk">
                                         <p style="color:red;">{{ $errors->first('nama_produk') }}</p>
                                     </div>
 
                                     <div class="col-md-6">
+                                        <span>Berat Produk</span>
+                                        <p></p>
                                         <input value="{{ $products->berat_produk }}" type="text" placeholder="Berat produk" name="berat_produk">
                                         <p style="color:red;">{{ $errors->first('berat_produk') }}</p>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <input type="file" placeholder="Foto" name="foto">
+                                        <span>Foto Produk</span>
+                                        <p></p>
+                                        <img src="{{ url('img/product') }}/{{$products->foto}}" class="img-thumbnail" style="width:100"/>
+                                        <p></p>
+                                        <input type="file" placeholder="Foto" id="new-photo" name="foto">
+                                        <input type="text" readonly placeholder="{{ $products->foto }}" onclick="setFieldVisible()" id="exist-photo"/>
                                     </div>
 
                                     <div class="col-md-6">
-                                        <input value="{{ $products->stok }}" type="text" placeholder="Stok" name="stok">
-                                        <p style="color:red;">{{ $errors->first('stok') }}</p>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <input type="text" value="{{ $products->harga_produk }}" placeholder="Harga produk" name="harga_produk">
-                                        <p style="color:red;">{{ $errors->first('harga_produk') }}</p>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <input type="text" value="{{ $products->deskripsi }}" placeholder="Deskripsi" name="deskripsi">
-                                        <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
-                                    </div>
-
-                                    <div class="col-md-6">
+                                        <span>Warna Produk</span>
+                                        <p></p>
                                         <div class="row">
                                             @foreach($colors as $c)
                                                 <div class="col-md-4">
@@ -64,6 +60,29 @@
                                     </div>
 
                                     <div class="col-md-6">
+                                        <span>Stok Produk</span>
+                                        <p></p>
+                                        <input value="{{ $products->stok }}" type="text" placeholder="Stok" name="stok">
+                                        <p style="color:red;">{{ $errors->first('stok') }}</p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <span>Harga Produk</span>
+                                        <p></p>
+                                        <input type="text" value="{{ $products->harga_produk }}" placeholder="Harga produk" name="harga_produk">
+                                        <p style="color:red;">{{ $errors->first('harga_produk') }}</p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <span>Deskripsi Produk</span>
+                                        <p></p>
+                                        <input type="text" value="{{ $products->deskripsi }}" placeholder="Deskripsi" name="deskripsi">
+                                        <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <span>Kategori Produk</span>
+                                        <p></p>
                                         <select name="kategori" class="form-control">
                                             @foreach($categories as $ct)
                                                 <option value="{{ $ct->nama_kategori }}" {{ ($ct->nama_kategori == $products->kategori) ? "selected" : "" }}>{{ $ct->nama_kategori }}</option>
@@ -85,4 +104,16 @@
         </div>
         </div>
     </section>
+
+    <script>
+        $(function() {
+            $('#exist-photo').attr('hidden', false);
+            $('#new-photo').attr('hidden', true);
+        });
+
+        function setFieldVisible() {
+            $('#exist-photo').attr('hidden', true);
+            $('#new-photo').attr('hidden', false);
+        }
+    </script>
 @endsection
