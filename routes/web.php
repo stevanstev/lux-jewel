@@ -73,6 +73,10 @@ Route::group(['middleware' => 'web'], function() {
             Route::post('/color-delete', 'AdminController@deleteColor');
             Route::post('/add-color', 'AdminController@addColor');
 
+            Route::get('/bahans','AdminController@bahans');
+            Route::post('/bahan-delete', 'AdminController@deleteBahan');
+            Route::post('/add-bahan', 'AdminController@addBahan');
+
             Route::get('/categories', 'AdminController@categories');
             Route::post('/category-delete', 'AdminController@deleteCategory');
             Route::post('/add-kategori', 'AdminController@addCategorie');

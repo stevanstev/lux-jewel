@@ -53,6 +53,7 @@
                                     <ul class="dropdown">
                                         <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/colors') }}">Warna</a></li>
                                         <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/categories') }}"">Kategori</a></li>
+                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/bahans') }}"">Bahan</a></li>
                                         <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/senders') }}"">Pengiriman</a></li>
                                     </ul>
                                 </li>

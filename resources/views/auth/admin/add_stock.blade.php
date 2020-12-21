@@ -60,24 +60,22 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <p>Deskripsi</p>
-                                            <input type="text" value="{{ old('deskripsi') }}" placeholder="Deskripsi" name="deskripsi">
-                                            <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
+                                            <p>Bahan Produk</p>
+                                            <select name="bahan" class="form-control">
+                                                @foreach($bahans as $b)
+                                                    <option value="{{ $b->nama_bahan }}">{{ $b->nama_bahan }}</option>
+                                                @endforeach
+                                            </select>
+                                            <p style="color:red;">{{ $errors->first('bahan') }}</p>
                                         </div>
 
                                         <div class="col-md-6">
                                             <p>Warna Produk</p>
-                                            <div class="row">
+                                            <select name="colors" class="form-control">
                                                 @foreach($colors as $c)
-                                                    <div class="col-md-4 color__checkbox">
-                                                        <div class="form-check">
-                                                            <input type="radio" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
-                                                            <br/>
-                                                            <label class="form-check-label" for="{{ $c->nama_warna }}">{{ $c->nama_warna }}</label>
-                                                        </div>
-                                                    </div>
+                                                    <option value="{{ $c->nama_warna }}">{{ $c->nama_warna }}</option>
                                                 @endforeach
-                                            </div>
+                                            </select>
                                             <p style="color:red;">{{ $errors->first('colors') }}</p>
                                         </div>
 
@@ -90,6 +88,13 @@
                                             </select>
                                             <p style="color:red;">{{ $errors->first('kategori') }}</p>
                                         </div>
+
+                                        <div class="col-md-12">
+                                            <p>Deskripsi</p>
+                                            <input type="text" value="{{ old('deskripsi') }}" placeholder="Deskripsi" name="deskripsi">
+                                            <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
+                                        </div>
+
                                         
                                         <div class="col-md-12" align="center">
                                             <button type="submit" class="site-btn">Tambah</button>

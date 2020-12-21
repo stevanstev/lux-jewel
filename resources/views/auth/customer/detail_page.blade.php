@@ -51,19 +51,13 @@
                                         <input type="text" hidden value="{{ $products->deskripsi }}" name="deskripsi"/>
                                         <input type="text" hidden value="{{ $products->kategori }}" name="kategori"/>
                                         <input type="text" hidden value="{{ $products->foto }}" name="foto"/>
+                                        <input type="text" hidden value="{{ $products->bahan }}" name="bahan"/>
+                                        <input type="text" hidden value="{{ $products->color }}" name="color"/>
                                         <input class="form-control" placeholder="jumlah" value="1" type="number" name="jumlah{{ $products->id }}" />
                                         <br/>
                                         <p style="color:red;">{{ $errors->first('jumlah'.$products->id) }}</p>
                                         <br/>
                                 </div>
-                                <br/>
-                                <span>Availble Color:</span>
-                                <br/>
-                                <select name="color" class="form-control">
-                                    @foreach($colors as $c)
-                                        <option value="{{ $c }}" selected>{{ $c }}</option>
-                                    @endforeach
-                                </select>
                             </div>
                                 <button class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</button>
                             </form>
@@ -93,26 +87,24 @@
                                         </label>
                                     </div>
                                 </li>
-                                <!-- <li>
-                                    <span>Available color:</span>
-                                    <div class="color__checkbox">
-                                        @foreach($colors as $c)
-                                            <label for="{{ $c }}">
-                                                <input type="radio" name="color__radio" id="{{ $c }}">
-                                                <span class="checkmark">{{ $c }}</span>
-                                            </label>
-                                        @endforeach
+                                <li>
+                                    <span>Bahan:</span>
+                                    <div class="stock__checkbox">
+                                        <label for="stockin">{{ $products->bahan }}</label>
                                     </div>
-                                </li> -->
+                                </li>
+                                <li>
+                                    <span>Available color:</span>
+                                    <div class="stock__checkbox">
+                                        <label for="stockin">{{ $products->color }}</label>
+                                    </div>
+                                </li>
                                 <li>
                                     <span>Berat:</span>
-                                    <div class="size__btn">
-                                        <label for="xs-btn" class="active">
+                                    <div class="stock__checkbox">
+                                        <label for="stockin" class="active">
                                             {{ $products->berat_produk }} G
                                         </label>
-                                        <label for="s-btn"></label>
-                                        <label for="m-btn"></label>
-                                        <label for="l-btn"></label>
                                     </div>
                                 </li>
                             </ul>

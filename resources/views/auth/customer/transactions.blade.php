@@ -113,13 +113,6 @@
                                         }
                                     @endphp
                                 </td>
-                                <!-- <td>
-                                    <form method="post" action="{{ url('/delete-stock') }}">
-                                        <input type="text" hidden name="_token" value="{{ csrf_token() }}" />      
-                                        <input type="text" hidden name="id" value="{{ $d->id }}" />
-                                        <button class="btn btn-danger">Hapus</button>
-                                    </form>
-                                </td> -->
                             </tr>
                             <div class="modal fade" id="exampleModal{{ $d->id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -142,6 +135,7 @@
                                                 <p>Harga: Rp.{{ number_format($value->harga_produk,2) }}</p>
                                                 <p>Jumlah: {{ $value->jumlah }}</p>
                                                 <p>Total Harga: Rp.{{ number_format($value->total_harga,2) }}</p>
+                                                <p>Bahan: {{ $value->bahan }}</p>
                                             </div>
                                         </div>
                                         <br/>

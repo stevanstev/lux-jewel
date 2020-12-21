@@ -40,12 +40,12 @@
                                 
                                 <div class="col-md-6 harian">
                                     <label>Dari</label>
-                                    <input data-provide="datepicker" type="text" data-date-format="yyyy-mm-dd" value="{{ old('from') }}" class="datepicker" id="datepicker1" name="from" placeholder="Dari">
+                                    <input autocomplete="off" data-provide="datepicker" type="text" data-date-format="yyyy-mm-dd" value="{{ old('from') }}" class="datepicker" id="datepicker1" name="from" placeholder="Dari">
                                     <p style="color:red;">{{ $errors->first('from') }}</p>
                                 </div>
                                 <div class="col-md-6 harian">
                                     <label>Sampai</label>
-                                    <input data-provide="datepicker" value="{{ old('to') }}" type="text" data-date-format="yyyy-mm-dd" class="datepicker" id="datepicker2" name="to" placeholder="Sampai">
+                                    <input autocomplete="off" data-provide="datepicker" value="{{ old('to') }}" type="text" data-date-format="yyyy-mm-dd" class="datepicker" id="datepicker2" name="to" placeholder="Sampai">
                                     <p style="color:red;">{{ $errors->first('to') }}</p>
                                 </div>
 
@@ -66,10 +66,10 @@
                                         <option value="11">November</option>
                                         <option value="12">Desember</option>
                                     </select>
-                                    <select name="from_m_y">
+                                    <select name="from_m_y" id="from_m_y" onchange="validateGreater(this.value,1)">
                                         @php 
-                                            for($i = $monthPredictionRange; $i < $monthPredictionRange + 100 ; $i++){
-                                                echo '<option value="'.$i.'">'.$i.'</option>';
+                                            for($i = $monthPredictionRange + 100; $i > $monthPredictionRange ; $i--){
+                                                echo '<option value="'.$i.'" selected>'.$i.'</option>';
                                             }
                                         @endphp
                                     </select>
@@ -91,13 +91,18 @@
                                         <option value="11">November</option>
                                         <option value="12">Desember</option>
                                     </select>
-                                    <select name="to_y_m">
+                                    <select name="to_y_m" id="to_y_m" onchange="validateGreater(this.value, 2)">
                                         @php 
-                                            for($i = $monthPredictionRange; $i < $monthPredictionRange + 100 ; $i++){
-                                                echo '<option value="'.$i.'">'.$i.'</option>';
+                                            for($i = $monthPredictionRange + 100; $i > $monthPredictionRange ; $i--){
+                                                echo '<option value="'.$i.'" selected>'.$i.'</option>';
                                             }
                                         @endphp
                                     </select>
+                                </div>
+
+                                <div class="col-md-12" align="center">
+                                    <br/>
+                                    <span id="errorGreater" style="color: red">From cannot greater than to</span>
                                 </div>
 
                                 <div class="col-md-12" align="center">
@@ -141,6 +146,7 @@
         $('.next i').removeClass();
         $('.next i').addClass("fa fa-chevron-right");
 
+        $("#errorGreater").hide();
         $('.harian').hide();
         $('#predict_form').attr('action', "{{ url('/predict-by-months') }}");
     });
@@ -154,6 +160,25 @@
             $('.bulanan').hide();
             $('.harian').show();
             $('#predict_form').attr('action', "{{ url('/predict-by-periods') }}");
+        }
+    }
+
+    function validateGreater(v, type){
+        let to = $("#to_y_m").val();
+        let from = $("#from_m_y").val();
+       
+        if(type == 1) {
+            if(v > to) {
+                $("#errorGreater").show();
+            } else {
+                $("#errorGreater").hide();
+            }
+        } else {
+            if(v < from) {
+                $("#errorGreater").show();
+            } else {
+                $("#errorGreater").hide();
+            }
         }
     }
 </script>

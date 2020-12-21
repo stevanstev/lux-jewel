@@ -35,13 +35,15 @@ class PredictionController extends GeneralController
 	* @param array $penjualan
 	* @return array
 	*/
-	public function linearRegression($totalPeriode = 0, $countTSquare = 0, $penjualan = []){
+	public function linearRegression($totalPeriode, $countTSquare, $penjualan = []){	
 		$count_periode_square = $totalPeriode ** 2;	
-        $count_penjualan = array_sum($penjualan);
+		$count_penjualan = array_sum($penjualan);
+
 		$count_t_y = $totalPeriode * $count_penjualan;
 		$rightCalculation = ($totalPeriode*$countTSquare) - ($count_periode_square);
 		$b = (($totalPeriode*$count_t_y) - ($totalPeriode * $count_penjualan)) / (($rightCalculation == 0) ? 1 : $rightCalculation);
-		$a = (($count_penjualan - ($b * $totalPeriode)) / $totalPeriode);
+		$leftDiv = ($count_penjualan - ($b * $totalPeriode));
+		$a = ($leftDiv / $totalPeriode);
 		$t = $totalPeriode + 1;
 		$prediction_formula = $a + ($b * $t);
 		
@@ -94,22 +96,44 @@ class PredictionController extends GeneralController
 
 		// initial value
 		$penjualan = array();
-		$totalPeriode = 0;
+		$totalPeriode = date_diff(date_create($from), date_create($to))->days;
 		$count_tsquare = 0;
 		$data = Produk::find($produk_id);
 		$nama_produk = $data->nama_produk;
+		
+		for ($i = 0 ; $i < $totalPeriode ; $i++) {
+			$nextDate = date('Y-m-d', strtotime("+$i day", strtotime($from)));
+			$queryGetData = "SELECT qty FROM detailorders WHERE created_at like '$nextDate%' and nama_produk='$nama_produk' order by created_at desc";
+			$result = DB::select($queryGetData);
+			$qty = 0;
 
-		$queryGetData = "SELECT qty FROM detailorders WHERE created_at BETWEEN '$from' and '$to' and nama_produk='$nama_produk' order by created_at desc";
-		$result = DB::select($queryGetData);
-		$totalPeriode = sizeof($result);
+			if(!empty($result)) {
+				foreach($result as $k => $v) {
+					$qty += $v->qty;
+				}
+			}
+
+			array_push($penjualan, $qty);
+		}
+		
 		for ($i = 1 ; $i <= $totalPeriode ; $i++) {
 			$count_tsquare += $i ** 2; 
 		}
-		foreach($result as $key => $value) {
-			array_push($penjualan, $value->qty);
-		}
 
 		$linearRegress = $this->linearRegression($totalPeriode, $count_tsquare, $penjualan);
+
+		$newPredict = new Prediksi;
+		$newPredict->tgl_prediksi = date('Y-m-d H:i:s');
+		$newPredict->hasil = json_encode(array(
+			'nama_produk' => $nama_produk,
+			'total' => floor($linearRegress[0]),
+			'periode' => 'Perhari',
+			'dari' => $from,
+			'sampai' => $to,
+		));
+		$newPredict->mse = $linearRegress[2];
+		$newPredict->mad = $linearRegress[1];
+		$newPredict->save();
 
 		$result = [
             'value' => floor($linearRegress[0]),
@@ -120,7 +144,7 @@ class PredictionController extends GeneralController
         ];
 
         return view('/auth/admin/predict_result', $result);
-    }
+	}
 
     public function predictByMonths(Request $request) {
 		Validator::make($request->all(), 
@@ -189,14 +213,27 @@ class PredictionController extends GeneralController
             }
 		}
 		
-		$prediction_result = $this->linearRegression($totalPeriode, $count_tsquare, $penjualan);
+		$linearRegress = $this->linearRegression($totalPeriode, $count_tsquare, $penjualan);
 
+		$newPredict = new Prediksi;
+		$newPredict->tgl_prediksi = date('Y-m-d H:i:s');
+		$newPredict->hasil = json_encode(array(
+			'nama_produk' => $nama_produk,
+			'total' => floor($linearRegress[0]),
+			'periode' => 'Perbulan',
+			'dari' => date('M',$fromMonth).'-'.$fromYear,
+			'sampai' => date('M',$toMonth).'-'.$toYear,
+		));
+		$newPredict->mse = $linearRegress[2];
+		$newPredict->mad = $linearRegress[1];
+		$newPredict->save();
+		
 		$result = [
-            'value' => floor($prediction_result[0]),
+            'value' => floor($linearRegress[0]),
             'nama_produk' => $nama_produk,
             'isNotif' => parent::getNotif(),
-            'mad' => $prediction_result[1],
-            'mse' => $prediction_result[2],
+            'mad' => $linearRegress[1],
+            'mse' => $linearRegress[2],
         ];
 
         return view('/auth/admin/predict_result', $result);

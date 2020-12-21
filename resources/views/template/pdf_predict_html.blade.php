@@ -31,19 +31,24 @@
 	<br/>
 	<table id="prediksi">
 		<tr>
-			<th>ID</th>
-      <th>Nama</th>
 			<th>Tanggal Prediksi</th>
+			<th>Periode</th>
+			<th>Dari</th>
+			<th>Sampai</th>
 			<th>Hasil Prediksi</th>
 			<th>MSE</th>
 			<th>MAD</th>
 		</tr>
 		@foreach($predicts as $d)
+			@php 
+				$hasil = json_decode($d->hasil);
+			@endphp
 		<tr>
-			<td>{{ $d->id }}</td>
-      <td>{{ $nama }}</td>
 			<td>{{ $d->tgl_prediksi }}</td>
-			<td>{{ explode('#',$d->hasil)[1] }}</td>
+			<td>{{ $hasil->periode }}</td>
+			<td>{{ $hasil->dari }}</td>
+			<td>{{ $hasil->sampai }}</td>
+			<td>{{ $hasil->total }}</td>
 			<td>{{ $d->mse }}</td>
 			<td>{{ $d->mad }}</td>
 		</tr>

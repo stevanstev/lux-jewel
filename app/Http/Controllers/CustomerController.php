@@ -50,6 +50,7 @@ class CustomerController extends GeneralController
         $deskripsi = $request->input('deskripsi');
         $color = $request->input('color');
         $kategori = $request->input('kategori');
+        $bahan = $request->input('bahan');
         $total_harga = $jumlah * $harga_produk;
 
         $model = new Cart();
@@ -64,6 +65,7 @@ class CustomerController extends GeneralController
         $model->jumlah = $jumlah;
         $model->total_harga = $total_harga;
         $model->foto = $foto;
+        $model->bahan = $bahan;
         $model->save();
 
         return redirect('/shop');

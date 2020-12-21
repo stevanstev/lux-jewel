@@ -27,6 +27,7 @@ class CreateTableCarts extends Migration
             $table->string('total_harga');
             $table->string('jumlah');
             $table->string('foto');
+            $table->string('bahan');
             $table->timestamps(0);
         });
     }

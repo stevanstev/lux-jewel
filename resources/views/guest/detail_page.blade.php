@@ -66,30 +66,22 @@
                                     </div>
                                 </li>
                                 <li>
+                                    <span>Bahan:</span>
+                                    <div class="stock__checkbox">
+                                        <label for="stockin">{{ $products->bahan }}</label>
+                                    </div>
+                                </li>
+                                <li>
                                     <span>Available color:</span>
-                                    <div class="color__checkbox">
-                                        <label for="red">
-                                            <input type="radio" name="color__radio" id="{{ $products->color }}" checked>
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <label for="black"></label>
-                                        <label for="grey"></label>
+                                    <div class="stock__checkbox">
+                                        <label for="stockin">{{ $products->color }}</label>
                                     </div>
                                 </li>
                                 <li>
                                     <span>Berat:</span>
-                                    <div class="size__btn">
-                                        <label for="xs-btn" class="active">
+                                    <div class="stock__checkbox">
+                                        <label for="stockin" class="active">
                                             {{ $products->berat_produk }} G
-                                        </label>
-                                        <label for="s-btn">
-                                            
-                                        </label>
-                                        <label for="m-btn">
-                                           
-                                        </label>
-                                        <label for="l-btn">
-                                            
                                         </label>
                                     </div>
                                 </li>

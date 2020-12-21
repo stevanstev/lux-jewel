@@ -31,33 +31,7 @@
                                         <p></p>
                                         <input value="{{ $products->berat_produk }}" type="text" placeholder="Berat produk" name="berat_produk">
                                         <p style="color:red;">{{ $errors->first('berat_produk') }}</p>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <span>Foto Produk</span>
-                                        <p></p>
-                                        <img src="{{ url('img/product') }}/{{$products->foto}}" class="img-thumbnail" style="width:100"/>
-                                        <p></p>
-                                        <input type="file" placeholder="Foto" id="new-photo" name="foto">
-                                        <input type="text" readonly placeholder="{{ $products->foto }}" onclick="setFieldVisible()" id="exist-photo"/>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <span>Warna Produk</span>
-                                        <p></p>
-                                        <div class="row">
-                                            @foreach($colors as $c)
-                                                <div class="col-md-4">
-                                                    <div class="form-check">
-                                                        <input {{ in_array($c->nama_warna, $checkedColor) ? 'checked' : '' }} type="radio" name="colors[]" value="{{ $c->nama_warna }}" class="form-check-input" id="{{ $c->nama_warna }}">
-                                                        <br/>
-                                                        <label class="form-check-label" for="{{ $c->nama_warna }}">{{ $c->nama_warna }}</label>
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        <p style="color:red;">{{ $errors->first('nama_warna') }}</p>
-                                    </div>
+                                    </div>     
 
                                     <div class="col-md-6">
                                         <span>Stok Produk</span>
@@ -73,23 +47,55 @@
                                         <p style="color:red;">{{ $errors->first('harga_produk') }}</p>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <span>Deskripsi Produk</span>
-                                        <p></p>
-                                        <input type="text" value="{{ $products->deskripsi }}" placeholder="Deskripsi" name="deskripsi">
-                                        <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
-                                    </div>
 
                                     <div class="col-md-6">
                                         <span>Kategori Produk</span>
                                         <p></p>
                                         <select name="kategori" class="form-control">
                                             @foreach($categories as $ct)
-                                                <option value="{{ $ct->nama_kategori }}" {{ ($ct->nama_kategori == $products->kategori) ? "selected" : "" }}>{{ $ct->nama_kategori }}</option>
+                                                <option value="{{ $ct->nama_kategori }}" selected="{{ ($ct->nama_kategori == $products->kategori) ? 'true' : '' }}">{{ $ct->nama_kategori }}</option>
                                             @endforeach
                                         </select>
                                         <p style="color:red;">{{ $errors->first('kategori') }}</p>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <span>Warna Produk</span>
+                                        <p></p>
+                                        <select name="colors" class="form-control">
+                                            @foreach($colors as $c)
+                                                <option value="{{ $c->nama_warna }}" selected="{{ ($c->nama_warna == $checkedColor) ? 'true' : '' }}">{{ $c->nama_warna }}</option>
+                                            @endforeach
+                                        </select>
+                                        <p style="color:red;">{{ $errors->first('colors') }}</p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <span>Bahan Produk</span>
+                                        <p></p>
+                                        <select name="bahan" class="form-control">
+                                            @foreach($bahans as $b)
+                                                <option value="{{ $b->nama_bahan }}" selected="{{ ($b->nama_bahan == $checkedBahan) ? 'true' : '' }}">{{ $b->nama_bahan }}</option>
+                                            @endforeach
+                                        </select>
+                                        <p style="color:red;">{{ $errors->first('bahan') }}</p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <span>Deskripsi Produk</span>
+                                        <p></p>
+                                        <input type="text" value="{{ $products->deskripsi }}" placeholder="Deskripsi" name="deskripsi">
+                                        <p style="color:red;">{{ $errors->first('deskripsi') }}</p>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <span>Foto Produk</span>
+                                        <p></p>
+                                        <img src="{{ url('img/product') }}/{{$products->foto}}" class="img-thumbnail" style="width:100"/>
+                                        <p></p>
+                                        <input type="file" placeholder="Foto" id="new-photo" name="foto">
+                                        <input type="text" readonly placeholder="{{ $products->foto }}" onclick="setFieldVisible()" id="exist-photo"/>
+                                    </div>       
                                     
                                     <div class="col-md-12" align="center">
                                         <button type="submit" class="site-btn">Ubah</button>

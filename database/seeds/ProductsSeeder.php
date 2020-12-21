@@ -18,17 +18,19 @@ class ProductsSeeder extends Seeder
         $detail_harga = [560000, 520000,550000,500000,610000,590000,650000, 600000, 570000, 600000, 700000, 500000, 760000, 670000, 530000, 660000, 700000, 720000, 650000, 660000];
         $colors = ['Silver', 'Gold', 'RoseGold'];
         $kategoris = ['Ring', 'Necklace'];
+        $bahan = ['Bahan1', 'Bahan2'];
 
         for ($i = 0 ; $i < 20 ; $i++) {
         	DB::table('produks')->insert([
         		'nama_produk' => $products[$i],
         		'berat_produk' => $berat_produk[rand(0, 6)],
-        		'foto' => '#',
+        		'foto' => 'banner2.jpg',
         		'stok' => $stok[rand(0,19)],
         		'harga_produk' => $detail_harga[$i],
         		'deskripsi' => 'ASD',
         		'color' => $colors[rand(0,2)],
-        		'kategori' => $kategoris[rand(0,1)],
+                'kategori' => $kategoris[rand(0,1)],
+                'bahan' => $bahan[rand(0,1)],
         	]);
         }
     }

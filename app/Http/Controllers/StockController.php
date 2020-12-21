@@ -8,6 +8,7 @@ use App\Produk;
 use App\Warna;
 use App\Pengirim;
 use App\Kategori;
+use App\Bahan;
 
 use App\Notif;
 
@@ -28,8 +29,9 @@ class StockController extends GeneralController
         $colors = Warna::all();
         $categories = Kategori::all();
         $senders = Pengirim::all();
+        $bahans = Bahan::all();
 
-        return view('auth/admin/add_stock', ['isNotif' => parent::getNotif(), 'colors' => $colors, 'categories' => $categories, 'senders' => $senders]);
+        return view('auth/admin/add_stock', ['isNotif' => parent::getNotif(), 'colors' => $colors, 'categories' => $categories, 'senders' => $senders, 'bahans' => $bahans]);
     }
 
     public function addAction(Request $request) {
@@ -43,6 +45,7 @@ class StockController extends GeneralController
                 'deskripsi'=>'required',
                 'colors'=>'required',
                 'kategori'=>'required',
+                'bahan'=>'required',
             ], 
             [
                 'nama_produk.required' => 'nama produk tidak boleh kosong',
@@ -55,6 +58,7 @@ class StockController extends GeneralController
                 'deskripsi.required' => 'deskripsi harus diisi',
                 'color.required' => 'color tidak boleh kosong',
                 'kategori.numeric' => 'kategori harus diisi',
+                'bahan.required' => 'bahan harus diisi',
             ]
         )->validate();
 
@@ -66,6 +70,7 @@ class StockController extends GeneralController
         $deskripsi = $request->input('deskripsi');
         $colors = $request->input('colors');
         $kategori = $request->input('kategori');
+        $bahan = $request->input('bahan');
 
         $foto->move("img/product/",$foto->getClientOriginalName());
 
@@ -76,8 +81,9 @@ class StockController extends GeneralController
         $model->stok = $stok;
         $model->harga_produk = $harga_produk;
         $model->deskripsi = $deskripsi;
-        $model->color = json_encode($colors);
+        $model->color = $colors;
         $model->kategori = $kategori;
+        $model->bahan = $bahan;
         $model->save();
 
         return redirect('/stock');
@@ -87,9 +93,21 @@ class StockController extends GeneralController
         $product = Produk::find($id);
         $colors = Warna::all();
         $categories = Kategori::all();
-        $checkedColor = json_decode($product->color);
+        $checkedColor = $product->color;
+        $checkedBahan = $product->bahan;
+        $bahans = Bahan::all();
 
-        return view('auth/admin/update_stock', ['isNotif' => parent::getNotif(),'products' => $product, 'colors' => $colors, 'categories' => $categories, 'checkedColor' => $checkedColor]);
+        $props = array(
+            'isNotif' => parent::getNotif(),
+            'products' => $product, 
+            'colors' => $colors, 
+            'categories' => $categories, 
+            'checkedColor' => $checkedColor,
+            'checkedBahan' => $checkedBahan,
+            'bahans' => $bahans,
+        );
+
+        return view('auth/admin/update_stock', $props);
     }
 
     public function updateAction(Request $request) {
@@ -102,6 +120,7 @@ class StockController extends GeneralController
             'deskripsi'=>'required',
             'colors'=>'required',
             'kategori'=>'required',
+            'bahan'=>'required',
         ], 
         [
             'nama_produk.required' => 'nama produk tidak boleh kosong',
@@ -113,6 +132,7 @@ class StockController extends GeneralController
             'deskripsi.required' => 'deskripsi harus diisi',
             'color.required' => 'color tidak boleh kosong',
             'kategori.required' => 'kategori harus diisi',
+            'bahan.required'=> 'bahan harus diisi',
         ])->validate();
 
         $id = $request->input('id');
@@ -124,6 +144,7 @@ class StockController extends GeneralController
         $deskripsi = $request->input('deskripsi');
         $colors = $request->input('colors');
         $kategori = $request->input('kategori');
+        $bahan = $request->input('bahan');
 
         $model = Produk::find($id);
         $model->nama_produk = $nama_produk;
@@ -135,8 +156,9 @@ class StockController extends GeneralController
         $model->stok = $stok;
         $model->harga_produk = $harga_produk;
         $model->deskripsi = $deskripsi;
-        $model->color = json_encode($colors);
+        $model->color = $colors;
         $model->kategori = $kategori;
+        $model->bahan = $bahan;
         $model->save();
 
         return redirect('/stock');

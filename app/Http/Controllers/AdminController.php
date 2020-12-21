@@ -10,6 +10,8 @@ use App\Order;
 
 use DB;
 
+use App\Bahan;
+
 use App\Produk;
 
 use Auth;
@@ -237,46 +239,41 @@ class AdminController extends GeneralController
 
     }
 
+    public function bahans() {
+        $data = Bahan::paginate(5);
+
+        return view('/auth/admin/bahans', ['isNotif' => parent::getNotif(), 'data' => $data]);
+    }
+
+    public function addBahan(Request $request) {
+        Validator::make($request->all(), 
+        [
+            'bahan' => 'required'
+        ], 
+        [
+            'bahan.required' => 'Bahan harus diisi'
+        ])->validate();
+
+        $bahan = $request->input('bahan');
+        $model = new Bahan();
+        $model->nama_bahan = $bahan;
+        $model->save();
+
+        return redirect()->back();
+    }
+
+    public function deleteBahan(Request $request) {
+        $id = $request->input('id');
+        $bahan = Bahan::find($id);
+        $bahan->delete();
+
+        return redirect('/bahans');
+    }
+
     public function colors() {
         $data = Warna::paginate(5);
 
         return view('/auth/admin/colors', ['isNotif' => parent::getNotif(), 'data' => $data]);
-    }
-
-    public function deleteColor(Request $request) {
-        $id = $request->input('id');
-        $color = Warna::find($id);
-        $color->delete();
-
-        return redirect('/colors');
-    }
-
-    public function categories() {
-        $data = Kategori::paginate(5);
-
-        return view('/auth/admin/categories', ['isNotif' => parent::getNotif(), 'data' => $data]);
-    }
-
-    public function deleteCategory(Request $request) {
-        $id = $request->input('id');
-        $color = Kategori::find($id);
-        $color->delete();
-
-        return redirect('/categories');
-    }
-
-    public function deleteSender(Request $request) {
-        $id = $request->input('id');
-        $color = Pengirim::find($id);
-        $color->delete();
-
-        return redirect('/senders');
-    }
-
-    public function senders() {
-        $data = Pengirim::paginate(5);
-
-        return view('/auth/admin/senders', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function addColor(Request $request) {
@@ -296,6 +293,20 @@ class AdminController extends GeneralController
         return redirect()->back();
     }
 
+    public function deleteColor(Request $request) {
+        $id = $request->input('id');
+        $color = Warna::find($id);
+        $color->delete();
+
+        return redirect('/colors');
+    }
+
+    public function categories() {
+        $data = Kategori::paginate(5);
+
+        return view('/auth/admin/categories', ['isNotif' => parent::getNotif(), 'data' => $data]);
+    }
+
     public function addCategorie(Request $request) {
         Validator::make($request->all(), 
         [
@@ -311,6 +322,20 @@ class AdminController extends GeneralController
         $model->save();
 
         return redirect()->back();
+    }
+
+    public function deleteCategory(Request $request) {
+        $id = $request->input('id');
+        $color = Kategori::find($id);
+        $color->delete();
+
+        return redirect('/categories');
+    }
+
+    public function senders() {
+        $data = Pengirim::paginate(5);
+
+        return view('/auth/admin/senders', ['isNotif' => parent::getNotif(), 'data' => $data]);
     }
 
     public function addSender(Request $request) {
@@ -330,13 +355,21 @@ class AdminController extends GeneralController
         return redirect()->back();
     }
 
+    public function deleteSender(Request $request) {
+        $id = $request->input('id');
+        $color = Pengirim::find($id);
+        $color->delete();
+
+        return redirect('/senders');
+    }
+
     public function prediction() {
         return view('/auth/admin/prediction', ['isNotif' => parent::getNotif()]);
     }
 
     public function pdfGeneratePredict(Request $request) {
         $getNama = $request->query('nama_produk');
-        $getPredict = Prediksi::where('hasil', 'like', $getNama.'%')->get();
+        $getPredict = Prediksi::where('hasil', 'like', '%"'.$getNama.'"%')->get();
 
         if (count($getPredict) == 0) {
             return redirect('/p-not-found');
