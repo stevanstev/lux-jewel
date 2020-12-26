@@ -28,7 +28,6 @@
 </style>
 
 @section('section')
-    @include('template/banner')
     <section class="services spad">
         <div class="container">
             <div class="row">

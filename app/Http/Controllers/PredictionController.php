@@ -103,13 +103,14 @@ class PredictionController extends GeneralController
 		
 		for ($i = 0 ; $i < $totalPeriode ; $i++) {
 			$nextDate = date('Y-m-d', strtotime("+$i day", strtotime($from)));
-			$queryGetData = "SELECT qty FROM detailorders WHERE created_at like '$nextDate%' and nama_produk='$nama_produk' order by created_at desc";
-			$result = DB::select($queryGetData);
+			$queryGetData = "SELECT * FROM detailorders WHERE created_at like '$nextDate%' and nama_produk='$nama_produk' order by created_at desc";
+			$result = DB::select($queryGetData);	
+
 			$qty = 0;
 
 			if(!empty($result)) {
-				foreach($result as $k => $v) {
-					$qty += $v->qty;
+				foreach($result as $key => $value) {
+					$qty = $value->qty;
 				}
 			}
 
@@ -136,7 +137,7 @@ class PredictionController extends GeneralController
 		$newPredict->save();
 
 		$result = [
-            'value' => floor($linearRegress[0]),
+            'value' => ceil($linearRegress[0]),
             'nama_produk' => $nama_produk,
             'isNotif' => parent::getNotif(),
             'mad' => $linearRegress[1],
@@ -204,12 +205,14 @@ class PredictionController extends GeneralController
 			$splitPeriode = explode('-', $periode[$i]);
 			$m = $splitPeriode[0];
 			$y = $splitPeriode[1];
-			$enumData = DB::select("SELECT COUNT(qty) as total FROM detailorders WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
+			$enumData = DB::select("SELECT qty as total FROM detailorders WHERE nama_produk='$nama_produk' AND predict_dt_m='$m' AND predict_dt_y='$y'");
 
-			if ($enumData == "") {
+			$enumData = empty($enumData) ? 0 : $enumData[0]->total;
+
+			if ($enumData == "") {	
             	array_push($penjualan, 0);
             } else {
-            	array_push($penjualan, $enumData[0]->total);
+            	array_push($penjualan, $enumData);
             }
 		}
 		
@@ -229,7 +232,7 @@ class PredictionController extends GeneralController
 		$newPredict->save();
 		
 		$result = [
-            'value' => floor($linearRegress[0]),
+            'value' => ceil($linearRegress[0]),
             'nama_produk' => $nama_produk,
             'isNotif' => parent::getNotif(),
             'mad' => $linearRegress[1],

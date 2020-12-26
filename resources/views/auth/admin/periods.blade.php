@@ -129,14 +129,16 @@
             format: 'yyyy-mm-dd',
             changeYear: true,
             changeMonth: true,
-            autoclose: true
+            autoclose: true,
+            yearRange: '2000:2020',
         });
 
         $('#datepicker2').datepicker({
             format: 'yyyy-mm-dd',
             changeYear: true,
             changeMonth: true,
-            autoclose: true
+            autoclose: true,
+            yearRange: '2000:2020',
         });
 
 

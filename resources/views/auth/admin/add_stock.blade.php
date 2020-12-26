@@ -8,7 +8,7 @@
     @if(count($categories) == 0 || count($colors) == 0 || count($senders) == 0)
         @include('template/empty_page', 
             [
-                'target' => 'variations', 
+                'target' => 'colors', 
                 'button_text' => 'Add Variations',
                 'leading' => 'Please insert Variations First',
                 'image' => 'variation.png',

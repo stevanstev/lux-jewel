@@ -55,6 +55,13 @@ class CustomController extends GeneralController
                 $toggle = ($page == 'c-search-items') ? true : false;
                 $data = $data('/auth/customer/products', Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10), parent::getNotif(), $toggle);   
                 break;
+            //flag
+            case 'c-search-prediction':
+             case 'c-prediction':
+                // check if product table is not empty
+                $toggle = ($page == 'c-search-prediction') ? true : false;
+                $data = $data('/auth/customer/prediction', Prediksi::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10), parent::getNotif(), $toggle);   
+                break;
             default:
                 break;
         }

@@ -6,7 +6,7 @@
                     <div class="footer__logo">
                         <a href="{{ url('/') }}"><img src="img/logo_t.png" alt=""></a>
                     </div>
-                    <p>Lux Jewelry merupakan online shop yang bergerak dibidang perhiasan bermerk Pandora.</p>
+                    <p>Lux Jewelry merupakan online shop yang bergerak dibidang penjualan aksesories.</p>
                 </div>
             </div>
             <div class="col-lg-2 col-md-3 col-sm-5">

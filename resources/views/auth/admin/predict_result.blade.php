@@ -16,9 +16,6 @@
                                 <br/>
                                 <h4>Stock Item: {{ $value }}</h4>
                                 <br/>
-                                <h4>MAD: {{ $mad }}</h4>
-                                <br/>
-                                <h4>MSE: {{ $mse }}</h4>
                                 <a href='{{ url("/prediction") }}' class="btn btn-primary cart-btn-transform m-3" data-abc="true">Kembali</a>
                             </div>
                         </div>

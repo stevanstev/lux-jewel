@@ -1,7 +1,7 @@
 @extends('template/container', ['show' => false])
 
 @section('title')
-    Stock
+    Produk
 @endsection
 
 @section('section')
@@ -19,7 +19,7 @@
         <div class="row" style="margin-top: 20px">
             <div class="col-md-1"></div>
             <div class="col-md-3">
-                <h3>Stock Barang</h3>
+                <h3>Produk</h3>
             </div>
             <div class="col-md-6" align="right">
                 <form method="post" action="{{ url('/search-stock') }}">

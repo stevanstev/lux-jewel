@@ -101,6 +101,7 @@ Route::group(['middleware' => 'web'], function() {
             searchRouting(array('a-stock', array('/stock', '/search-stock')), array('a-search-stock', '/search-stock'));
             searchRouting(array('a-history', array('/history', '/search-history')), array('a-search-history', '/search-history'));
             searchRouting(array('a-order', array('/order', '/search-order')), array('a-search-order', '/search-order'));
+            searchRouting(array('a-predictions', array('/predictions', '/search-predictions')), array('a-search-predictions', '/search-predictions'));
         });
         
         //Customer
