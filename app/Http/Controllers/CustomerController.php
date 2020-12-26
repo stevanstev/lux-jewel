@@ -8,6 +8,8 @@ use Auth;
 
 use App\Cart;
 
+use DB;
+
 use App\Pengirim;
 
 use App\Produk;
@@ -17,6 +19,8 @@ use App\Pembayaran;
 use App\Customer;
 
 use App\Notif;
+
+use App\Stock;
 
 use Illuminate\Support\Facades\Validator;
 
@@ -28,10 +32,10 @@ class CustomerController extends GeneralController
 
     public function itemsToCart(Request $request) {
         $id_produk = $request->input('id');
-        $stok = (int)$request->input('stok');
+        $total_stok = (int)$request->input('total_stok');
         Validator::make($request->all(), 
         [
-            "jumlah$id_produk" => "required|not_in:0|numeric|max:$stok"
+            "jumlah$id_produk" => "required|not_in:0|numeric|max:$total_stok"
         ], 
         [
             "jumlah$id_produk.required" => 'Jumlah tidak boleh kosong',
@@ -148,7 +152,7 @@ class CustomerController extends GeneralController
     public function transactions() {
         $data = Pembayaran::where('id_user', Auth::user()->id)->paginate(10);
 
-        return view('/auth/customer/transactions', ['isNotif' => parent::getNotif(), 'data' => $data]);
+        return view('/auth/customer/transactions', ['isNotif' => parent::getNotif(), 'results' => $data]);
     }
 
     public function uploadBukti($id) {
@@ -173,8 +177,9 @@ class CustomerController extends GeneralController
         $items = json_decode($request->input('items'));
 
         foreach($items as $key => $value) {
-            $model = Produk::find($value->id_produk);
-            $model->stok = $model->stok - $value->jumlah;
+            //flag to be fixing
+            $model = Stock::where('product_id','=',$value->id_produk)->first();
+            $model->total_stok = $model->total_stok - $value->jumlah;
             $model->save();
         }
 
@@ -249,9 +254,14 @@ class CustomerController extends GeneralController
     }
 
     public function itemDetails($id) {
-        $products = Produk::find($id);
-        $colors = json_decode($products->color);
-        $related = Produk::where('kategori', $products->kategori)->where('id', 'not like', $id)->take(4)->get();
+        $findProduct = Produk::find($id);
+        $products = DB::table('produks')
+        ->join('stocks', 'produks.id', '=', 'stocks.product_id')
+        ->select('produks.*', 'stocks.total_stok')
+        ->where('produks.id','=',$id)
+        ->first();
+        $colors = $findProduct->color;
+        $related = Produk::where('kategori', $findProduct->kategori)->where('id', 'not like', $id)->take(4)->get();
 
         return view('/auth/customer/detail_page', ['isNotif' => parent::getNotif(), 'products' => $products, 'related' => $related, 'colors' => $colors]);
     }

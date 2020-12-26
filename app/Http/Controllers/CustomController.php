@@ -12,10 +12,22 @@ use App\Order;
 
 use App\Pembayaran;
 
+use DB;
+
+use Auth;
+
 class CustomController extends GeneralController
-{
+{   
+    ///$page -> page to render
+    ///$search-> search query
     public function searchMap($page, $search) {
         $data = function($v, $s, $n = null, $t = false) {
+            ///[$v] means view to render 
+            ///[$s] means search query results to show into it's view
+            ///[$n] means params for sending notification value to view
+            ///[$t] means toggle to avoid logic when the query is empty and show action button
+            /// -> example: when we search transaction then query result return 0, it will show 
+            /// go to transaction button
             $d = new \StdClass();
             $d->view = $v;
             $d->search = $s;
@@ -29,38 +41,67 @@ class CustomController extends GeneralController
             // g for guest, a for auth, c for customer
             case 'g-search-prod':
             case 'g-product':
-                $data = $data('/guest/product', Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10));   
+                $query = Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10);
+                $data = $data('/guest/product', $query);   
                 break;
-            case 'a-search-stock':
-            case 'a-stock':
+            case 'a-search-stuff':
+            case 'a-stuff':
                 // check if product table is not empty
-                $toggle = ($page == 'a-search-stock') ? true : false;
-                $data = $data('/auth/admin/stock', Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%' . $search . '%')->paginate(10), parent::getNotif(), $toggle);   
+                $toggle = ($page == 'a-search-stuff') ? true : false;
+                $query = DB::table('produks')
+                ->join('stocks', 'produks.id', '=', 'stocks.product_id')
+                ->select('produks.*', 'stocks.total_stok')
+                ->where('produks.nama_produk','like','%' . $search . '%')
+                ->paginate(10);
+                $data = $data('/auth/admin/stuff', $query, parent::getNotif(), $toggle);   
                 break;
             case 'a-search-history':
             case 'a-history':
                 // check if product table is not empty
                 $toggle = ($page == 'a-search-history') ? true : false;
-                $data = $data('/auth/admin/history', Order::where('kota_penerima', $search)->orWhere('kota_penerima', 'like', '%' . $search . '%')->paginate(10), parent::getNotif(), $toggle);   
+                $changeDateFormat = function($date) {
+                    $newFormat = str_replace('/','-', $date);
+                    $newFormat = substr($newFormat, 6, strlen($date) - 1).'-'.substr($newFormat, 0, 5);
+                    return $newFormat;
+                };
+                $from = $changeDateFormat($search[0]);
+                $to = $changeDateFormat($search[1]);
+                $query =  DB::table('orders')
+                ->whereBetween('tgl_transaksi', [$from, $to])
+                ->paginate(10);
+                $data = $data('/auth/admin/history', $query, parent::getNotif(), $toggle);   
                 break;
             case 'a-search-order':
             case 'a-order':
                 // check if product table is not empty
                 $toggle = ($page == 'a-search-order') ? true : false;
-                $data = $data('/auth/admin/order', Pembayaran::where('nama_penerima', $search)->orWhere('nama_penerima', 'like', '%' . $search . '%')->paginate(10), parent::getNotif(), $toggle);   
+                $query = Pembayaran::where('nama_penerima', $search)->orWhere('nama_penerima', 'like', '%' . $search . '%')->paginate(10);
+                $data = $data('/auth/admin/order', $query, parent::getNotif(), $toggle);   
                 break;
             case 'c-search-items':
             case 'c-items':
                 // check if product table is not empty
                 $toggle = ($page == 'c-search-items') ? true : false;
-                $data = $data('/auth/customer/products', Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10), parent::getNotif(), $toggle);   
+                $query = Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10);
+                $data = $data('/auth/customer/products', $query, parent::getNotif(), $toggle);   
+                break;
+            case 'c-search-transactions':
+            case 'c-transactions':
+                // check if product table is not empty
+                $toggle = ($page == 'c-search-transactions') ? true : false;
+                $query = DB::table('pembayarans')
+                ->where('id_user', '=', Auth::user()->id)
+                ->where('items', 'like', '%'.$search.'%')
+                ->paginate(10);
+                $data = $data('/auth/customer/transactions', $query, parent::getNotif(), $toggle);   
                 break;
             //flag
-            case 'c-search-prediction':
-             case 'c-prediction':
+            case 'a-search-prediction':
+            case 'a-prediction':
                 // check if product table is not empty
-                $toggle = ($page == 'c-search-prediction') ? true : false;
-                $data = $data('/auth/customer/prediction', Prediksi::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10), parent::getNotif(), $toggle);   
+                $toggle = ($page == 'a-search-prediction') ? true : false;
+                $query = Produk::where('nama_produk', $search)->orWhere('nama_produk', 'like', '%'.$search.'%')->paginate(10);
+                $data = $data('/auth/admin/prediction', $query, parent::getNotif(), $toggle);   
                 break;
             default:
                 break;
@@ -70,8 +111,12 @@ class CustomController extends GeneralController
     }
 
     public function search(Request $request) {
-        $search = $request->input('search');
+        // Get Input search query
+        // If search query is custom (not just an search input)
+        $search = $request->input('isCustom') == true ? $request->input('custom') : $request->input('search');
+        // Get cannonical route name from searchRouting Function
         $path = Route::currentRouteName();
+        // Results invoking
         $result = $this->searchMap($path, $search);
 
         return view($result->view, ['results' => $result->search, 'isNotif' => $result->notif, 'toggle' => $result->toggle]);

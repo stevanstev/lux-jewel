@@ -35,7 +35,7 @@
                         </div>
                         <div class="product__details__price">Rp {{ number_format($products->harga_produk, 2) }}</div>
                         @php 
-                            if($products->stok != 0){
+                            if($products->total_stok != 0){
                         @endphp
                         <div class="product__details__button">
                             <div class="quantity">
@@ -44,7 +44,7 @@
                                     <form method="post" action="{{ url('/item-to-cart') }}">
                                         <input type="text" hidden value="{{ csrf_token() }}" name="_token"/>
                                         <input type="text" hidden value="{{ $products->id }}" name="id"/>
-                                        <input type="text" hidden value="{{ $products->stok }}" name="stok"/>
+                                        <input type="text" hidden value="{{ $products->total_stok }}" name="total_stok"/>
                                         <input type="text" hidden value="{{ $products->nama_produk }}" name="nama_produk"/>
                                         <input type="text" hidden value="{{ $products->berat_produk }}" name="berat_produk"/>
                                         <input type="text" hidden value="{{ $products->harga_produk }}" name="harga_produk"/>
@@ -72,9 +72,9 @@
                                     <div class="stock__checkbox">
                                         <label for="stockin">
                                             @php 
-                                                if($products->stok != 0) {
+                                                if($products->total_stok != 0) {
                                             @endphp 
-                                                Stok Ada ({{ $products->stok }})
+                                                Stok Ada ({{ $products->total_stok }})
                                                 <input type="checkbox"  id="stockin" checked>
                                                 <span class="checkmark"></span>
                                             @php 

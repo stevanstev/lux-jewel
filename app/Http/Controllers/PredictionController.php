@@ -26,7 +26,7 @@ class PredictionController extends GeneralController
     public function index() {
         $products = Produk::paginate(10);
 
-        return view('/auth/admin/prediction', ['products' => $products, 'isNotif' => parent::getNotif()]);
+        return view('/auth/admin/prediction', ['results' => $products, 'isNotif' => parent::getNotif()]);
     }
 
 	/**

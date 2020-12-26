@@ -48,13 +48,18 @@
                             @if(Auth::user()->role == 1)
                                 <li class="{{ Request::path() == 'admin-dash' ? 'active' : '' }}"><a href="{{ url('/admin-dash') }}">Home</a></li>
                                 <li class="{{ Request::path() == 'order' ? 'active' : '' }}"><a href="{{ url('/order') }}">Order List</a></li>
-                                <li class="{{ Request::path() == 'stock' ? 'active' : '' }}"><a href="{{ url('/stock') }}">Stock</a></li>
+                                <li><a href="#">Items</a>
+                                    <ul class="dropdown">
+                                        <li class="{{ Request::path() == 'stuff' ? 'active' : '' }}"><a href="{{ url('/stuff') }}">Products</a></li>
+                                        <li class="{{ Request::path() == 'stock' ? 'active' : '' }}"><a href="{{ url('/stock') }}">Stocks</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="#">Variations</a>
                                     <ul class="dropdown">
-                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/colors') }}">Warna</a></li>
-                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/categories') }}"">Kategori</a></li>
-                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/bahans') }}"">Bahan</a></li>
-                                        <li class="{{ Request::path() == 'variations' ? 'active' : '' }}"><a href="{{ url('/senders') }}"">Pengiriman</a></li>
+                                        <li class="{{ Request::path() == 'colors' ? 'active' : '' }}"><a href="{{ url('/colors') }}">Warna</a></li>
+                                        <li class="{{ Request::path() == 'categories' ? 'active' : '' }}"><a href="{{ url('/categories') }}"">Kategori</a></li>
+                                        <li class="{{ Request::path() == 'bahans' ? 'active' : '' }}"><a href="{{ url('/bahans') }}"">Bahan</a></li>
+                                        <li class="{{ Request::path() == 'senders' ? 'active' : '' }}"><a href="{{ url('/senders') }}"">Pengiriman</a></li>
                                     </ul>
                                 </li>
                                 <li class="{{ Request::path() == 'prediction' ? 'active' : '' }}"><a href="{{ url('/prediction') }}">Prediction</a></li>

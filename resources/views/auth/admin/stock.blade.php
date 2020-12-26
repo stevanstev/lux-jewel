@@ -1,86 +1,87 @@
 @extends('template/container', ['show' => false])
 
 @section('title')
-    Produk
+    Stock
 @endsection
 
 @section('section')
-    @if(count($results) == 0 && $toggle == false)
+    @php 
+        // if no data in stock, then tell user to insert one
+    @endphp
+    @if(count($products) == 0)
         @include('template/empty_page', 
             [
-                'target' => 'tambah-stock', 
-                'button_text' => 'Isi Stock',
-                'leading' => 'Stock is Empty',
+                'target' => 'tambah-stuff', 
+                'button_text' => 'Isi Product',
+                'leading' => 'Product is Empty',
                 'image' => 'variation.png',
-                'sub_leading' => 'Tambah Stock'
+                'sub_leading' => 'Tambah Product'
             ]
         )
     @else 
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-1"></div>
-            <div class="col-md-3">
-                <h3>Produk</h3>
+    <section class="contact spad">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2"></div>
+                    <div class="col-lg-8 col-md-8">
+                        <div class="contact__content">
+                            <div class="contact__address">
+                                <h5>Tambah Stock</h5>
+                            </div>
+                            <div class="contact__form">
+                                <form action="{{ url('/tambah-stock') }}" method="post" enctype="multipart/form-data">
+                                    <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p>Pilih Produk</p>
+                                            <select name="id_produk" class="form-control" id="id_produk" onchange="getDetails(this.value)">
+                                                @foreach($products as $p)
+                                                    <option value="{{ $p->id }}">{{ $p->nama_produk }}</option>
+                                                @endforeach
+                                            </select>
+                                            <p style="color:red;">{{ $errors->first('nama_produk') }}</p>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <p>Total Stock</p>
+                                            <input type="number" min="0" value="{{ old('total_stock') }}" id="total_stock" placeholder="Total Stock" name="total_stock">
+                                            <p style="color:red;">{{ $errors->first('total_stock') }}</p>
+                                        </div>
+                                        
+                                        <div class="col-md-12" align="center">
+                                            <button type="submit" class="site-btn">Submit</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2"></div>
+                </div>
             </div>
-            <div class="col-md-6" align="right">
-                <form method="post" action="{{ url('/search-stock') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="text" name="search" placeholder="Cari Barang"/>
-                    <button class="btn btn-primary">Cari</button>
-                </form>
             </div>
-            <div class="col-md-1" align="right">
-                <a href="{{ url('/tambah-stock') }}" class="btn btn-success">Tambah</a>
-            </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-12" style="margin-top: 20px">
-                <table class="table">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">id</th>
-                            <th scope="col">Nama</th>
-                            <th scope="col">Berat</th>
-                            <th scope="col">Foto</th>
-                            <th scope="col">Stok</th>
-                            <th scope="col">Harga</th>
-                            <th scope="col">Deskripsi</th>
-                            <th scope="col">#</th>
-                            <th scope="col">#</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($results as $item)
-                            <tr>
-                                <th scope="row">{{ $item->id }}</th>
-                                <td>{{ $item->nama_produk }}</td>
-                                <td>{{ $item->berat_produk }}</td>
-                                <td>
-                                    <img src="{{ url('/img/product/') }}/{{ str_replace(' ', '%20', $item->foto) }}" width="80"/>
-                                </td>
-                                <td>{{ $item->stok }}</td>
-                                <td>{{ $item->harga_produk }}</td>
-                                <td>{{ $item->deskripsi }}</td>
-                                <td>
-                                    <a href="{{ url('/update-stock') }}/{{ $item->id }}" class="btn btn-primary">Ubah</a>    
-                                </td>
-                                <td>
-                                    <form method="post" action="{{ url('/delete-stock') }}">
-                                        <input type="text" hidden name="_token" value="{{ csrf_token() }}" />      
-                                        <input type="text" hidden name="id" value="{{ $item->id }}" />
-                                        <button class="btn btn-danger">Hapus</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4" align="center">
-                {{ $results->render() }}
-            </div>
-            <div class="col-md-4"></div>
-        </div>
+        </section>
     @endif
+
+    <script>
+        $(function() {
+            let getUrl = window.location;
+            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+            $.ajax({
+                url: baseUrl + 'fetch-items-details/' + {{ $products[0]->id }},
+            }).done((details) => {
+                $("#total_stock").val(details.totalStock);
+            });
+        });
+
+        function getDetails(id) {
+            let getUrl = window.location;
+            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+            $.ajax({
+                url: baseUrl + 'fetch-items-details/' + id,
+            }).done((details) => {
+                $("#total_stock").val(details.totalStock);
+            });
+        }
+    </script>
 @endsection

@@ -35,7 +35,7 @@
                         </div>
                         <div class="product__details__price">Rp {{ number_format($products->harga_produk, 2) }}</div>
                         @php 
-                            if($products->stok != 0){
+                            if($products->total_stok != 0){
                         @endphp
                         <div class="product__details__button">
                             <a class="cart-btn" href="{{ url('/login') }}"><span class="icon_bag_alt"></span> Add to Cart</button>
@@ -50,9 +50,9 @@
                                     <div class="stock__checkbox">
                                         <label for="stockin">
                                             @php 
-                                                if($products->stok != 0) {
+                                                if($products->total_stok != 0) {
                                             @endphp 
-                                                Stok Ada ({{ $products->stok }})
+                                                Stok Ada ({{ $products->total_stok }})
                                                 <input type="checkbox"  id="stockin" checked>
                                                 <span class="checkmark"></span>
                                             @php 

@@ -1,35 +1,38 @@
 @extends('template/container', ['show' => false])
 
 @section('title')
-    Prediction
+    Produk
 @endsection
 
 @section('section')
+    @php 
+        // if no data in stock, then tell user to insert one
+    @endphp
     @if(count($results) == 0 && $toggle == false)
         @include('template/empty_page', 
             [
-                'target' => 'stock', 
-                'button_text' => 'Isi Stock',
-                'leading' => 'Prediction is Empty',
-                'image' => 'predict.png',
-                'sub_leading' => 'Tambah Stock'
+                'target' => 'tambah-stuff', 
+                'button_text' => 'Isi Product',
+                'leading' => 'Product is Empty',
+                'image' => 'variation.png',
+                'sub_leading' => 'Tambah Product'
             ]
         )
     @else 
         <div class="row" style="margin-top: 20px">
             <div class="col-md-1"></div>
             <div class="col-md-3">
-                <h3>Prediksi</h3>
+                <h3>Produk</h3>
             </div>
-            <div class="col-md-4" align="right">
-                <form method="post" action="{{ url('/search-prediction') }}">
+            <div class="col-md-6" align="right">
+                <form method="post" action="{{ url('/search-stuff') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="text" name="search" placeholder="Cari Item"/>
+                    <input type="text" name="search" placeholder="Cari Barang"/>
                     <button class="btn btn-primary">Cari</button>
                 </form>
             </div>
-            <div class="col-md-3" align="right">
-                <a class="btn btn-success" href="{{ url('/laporan-prediksi') }}">Buat Laporan</a>
+            <div class="col-md-1" align="right">
+                <a href="{{ url('/tambah-stuff') }}" class="btn btn-success">Tambah</a>
             </div>
             <div class="col-md-1"></div>
             <div class="col-md-12" style="margin-top: 20px">
@@ -42,7 +45,9 @@
                             <th scope="col">Foto</th>
                             <th scope="col">Stok</th>
                             <th scope="col">Harga</th>
-                            <th scope="col">Prediksi</th>
+                            <th scope="col">Deskripsi</th>
+                            <th scope="col">#</th>
+                            <th scope="col">#</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,10 +59,18 @@
                                 <td>
                                     <img src="{{ url('/img/product/') }}/{{ str_replace(' ', '%20', $item->foto) }}" width="80"/>
                                 </td>
-                                <td>{{ $item->stok }}</td>
+                                <td>{{ $item->total_stok }}</td>
                                 <td>{{ $item->harga_produk }}</td>
+                                <td>{{ $item->deskripsi }}</td>
                                 <td>
-                                    <a class="btn btn-success" href="{{ url('/periods') }}/{{ $item->id }}">Prediksi</a>
+                                    <a href="{{ url('/update-stuff') }}/{{ $item->id }}" class="btn btn-primary">Ubah</a>    
+                                </td>
+                                <td>
+                                    <form method="post" action="{{ url('/delete-stuff') }}">
+                                        <input type="text" hidden name="_token" value="{{ csrf_token() }}" />      
+                                        <input type="text" hidden name="id" value="{{ $item->id }}" />
+                                        <button class="btn btn-danger">Hapus</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

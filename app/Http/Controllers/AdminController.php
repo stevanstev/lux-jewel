@@ -18,6 +18,8 @@ use Auth;
 
 use PDF;
 
+use App\Stock;
+
 use App\Warna;
 
 use App\Detailorder;
@@ -164,8 +166,9 @@ class AdminController extends GeneralController
             $items = json_decode($model->items);
 
             foreach($items as $key => $value) {
-                $product_model = Produk::find($value->id_produk);
-                $product_model->stok = $product_model->stok + $value->jumlah;
+                //to be fixing
+                $product_model = Stock::where('product_id','=',$value->id_produk)->first();
+                $product_model->total_stok = $product_model->total_stok + $value->jumlah;
                 $product_model->save();
             }
 
@@ -190,9 +193,9 @@ class AdminController extends GeneralController
 
         $items = json_decode($tempTransaction->items);
         foreach($items as $key => $value) {
-            $p = Produk::find($value->id_produk);
-            $currentStock = $p->stok;
-            $p->stok = $currentStock - $value->jumlah;
+            $p = Stock::where('product_id', '=', $value->id_produk)->first();
+            $currentStock = $p->total_stok;
+            $p->total_stok = $currentStock - $value->jumlah;
             $p->save();
 
             $d = new Detailorder();
@@ -429,5 +432,20 @@ class AdminController extends GeneralController
         $getProduct = Produk::all();
 
         return view('/auth/admin/laporan_prediksi', ['isNotif' => parent::getNotif(), 'products' => $getProduct]);
+    }
+
+    public function history() {
+        $results = Order::paginate(10);
+
+        return view('/auth/admin/history', ['isNotif' => parent::getNotif(), 'results' => $results]);
+    }
+
+    public function fetchItemDetails($id) {
+        $details = Stock::where('product_id','=',$id)->first();
+        
+        return response()->json(array(
+            'statusCode' => 200,
+            'totalStock' => $details->total_stok,
+        ));
     }
 }

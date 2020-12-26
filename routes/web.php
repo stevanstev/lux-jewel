@@ -16,9 +16,26 @@ Route::group(['middleware' => 'web'], function() {
 
     //Map the searching Routes Function
     function searchRouting($g, $p) {
-        Route::get($g[1][0], 'CustomController@search')->name($g[0]);
-        Route::get($g[1][1], 'CustomController@search')->name($g[0]);
-        Route::post($p[1], 'CustomController@search')->name($p[0]);
+        ///$g means GET ROUTE
+        /// index 0 for guest route
+        /// index 1 for auth route
+        ///example:
+        ///array('a-stock', array('/stock', '/search-stock'))
+
+        ///$p means POST ROUTE
+        /// index 0 
+        ///example:
+        ///array('a-search-stock', '/search-stock')
+
+        $indexGetPath = $g[1][0];
+        $searchGetPath = $g[1][1];
+        $routeGetName = $g[0];
+
+        $routePostName = $p[0];
+        $routePostAction = $p[1];
+        Route::get($indexGetPath, 'CustomController@search')->name($routeGetName);
+        Route::get($searchGetPath, 'CustomController@search')->name($routeGetName);
+        Route::post($routePostAction, 'CustomController@search')->name($routePostName);
     }    
     
     Route::get('/contact', 'OthersController@contact');
@@ -45,11 +62,17 @@ Route::group(['middleware' => 'web'], function() {
         Route::group(['middleware' => 'admin'], function() {
             Route::get('/admin-dash', 'AdminController@index');
 
-            Route::get('/tambah-stock', 'StockController@add');
-            Route::post('/tambah-action', 'StockController@addAction');
-            Route::get('/update-stock/{id}', 'StockController@update');
-            Route::post('/update-stock-action', 'StockController@updateAction');
-            Route::post('/delete-stock', 'StockController@delete');
+            Route::get('/fetch-items-details/{id}', 'AdminController@fetchItemDetails');
+
+            searchRouting(array('a-stuff', array('/stuff', '/search-stuff')), array('a-search-stuff', '/search-stuff'));
+            Route::get('/tambah-stuff', 'StuffController@add');
+            Route::post('/tambah-action', 'StuffController@addAction');
+            Route::get('/update-stuff/{id}', 'StuffController@update');
+            Route::post('/update-stuff-action', 'StuffController@updateAction');
+            Route::post('/delete-stuff', 'StuffController@delete');
+
+            Route::get('/stock', 'StockController@index');
+            Route::post('/tambah-stock', 'StockController@add');
 
             Route::get('/tambah-detail/{id}', 'AdminController@tambahDetail');
             Route::post('/update-transaksi', 'AdminController@updateTransaksi');
@@ -62,13 +85,12 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::post('/selesai-transaksi', 'AdminController@selesaiTransaksi');
 
+            searchRouting(array('a-prediction', array('/prediction', '/search-prediction')), array('a-search-prediction', '/search-prediction'));
             Route::get('/prediction', 'PredictionController@index');
             Route::post('/predict-action', 'PredictionController@predict');
             Route::post('/predict-by-periods', 'PredictionController@predictByPeriods');
-
             Route::post('/predict-by-months', 'PredictionController@predictByMonths');
 
-            // Route::get('/variations', 'AdminController@variations');
             Route::get('/colors', 'AdminController@colors');
             Route::post('/color-delete', 'AdminController@deleteColor');
             Route::post('/add-color', 'AdminController@addColor');
@@ -98,10 +120,10 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/periods/{id}', 'PredictionController@periods');
 
-            searchRouting(array('a-stock', array('/stock', '/search-stock')), array('a-search-stock', '/search-stock'));
             searchRouting(array('a-history', array('/history', '/search-history')), array('a-search-history', '/search-history'));
+            Route::get('/history', 'AdminController@history');
+
             searchRouting(array('a-order', array('/order', '/search-order')), array('a-search-order', '/search-order'));
-            searchRouting(array('a-predictions', array('/predictions', '/search-predictions')), array('a-search-predictions', '/search-predictions'));
         });
         
         //Customer
@@ -115,6 +137,8 @@ Route::group(['middleware' => 'web'], function() {
             Route::post('/item-checkout', 'CustomerController@itemCheckout');
 
             Route::get('/transactions', 'CustomerController@transactions');
+            searchRouting(array('c-transactions', array('/transactions', '/search-transactions')), array('c-search-transactions', '/search-transactions'));
+
             Route::get('/upload-bukti/{id}', 'CustomerController@uploadBukti');
             Route::post('/upload-bukti-action', 'CustomerController@uploadBuktiAction');
 
