@@ -57,7 +57,7 @@
                                         if($d->status_pesanan == 0) {
                                             echo "Menunggu Update Admin";
                                         } else if($d->status_pesanan == 1) {
-                                            echo "Menunggu Pembayaran";
+                                            echo "Menunggu Pembayaran <p style='color: green;'>Batas Waktu: ($d->expired_date)</p>";
                                         } else if($d->status_pesanan == 2) {
                                             echo "Menunggu Konfirmasi";
                                         } else {

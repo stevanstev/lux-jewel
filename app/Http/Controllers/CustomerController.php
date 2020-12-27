@@ -133,6 +133,7 @@ class CustomerController extends GeneralController
         $model->items = $items;
         $model->kurir = $nama_kurir;
         $model->biaya_kirim = $harga_kurir;
+        $model->expired_date = date('Y-m-d H:i:s', strtotime('+2 day', strtotime(date('Y-m-d H:i:s'))));
         $model->save();
 
         $getAdmin = Customer::where('role', 1)->first();
@@ -195,6 +196,7 @@ class CustomerController extends GeneralController
 
         $model = Pembayaran::find($id);
         $model->bukti_pembayaran = $bukti->getClientOriginalName();
+        $model->expired_date = "#";
         if(!empty($nama_penerima)) {
             $model->nama_penerima = $nama_penerima;
         }

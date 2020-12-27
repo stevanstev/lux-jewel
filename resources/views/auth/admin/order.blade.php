@@ -21,7 +21,12 @@
             <div class="col-md-3">
                 <h3>Order List</h3>
             </div>
-            <div class="col-md-7" align="right">
+            <div class="col-md-3" align="center">
+                <form method="get" action="{{ url('/check-expired-scheduler') }}">
+                    <button class="btn btn-warning">Run Scheduler</button>
+                </form>
+            </div>
+            <div class="col-md-4" align="right">
                 <form method="post" action="{{ url('/search-order') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
                     <input type="text" name="search" placeholder="Cari Transaksi"/>

@@ -18,19 +18,10 @@
     @else
         <div class="row" style="margin-top: 20px">
             <div class="col-md-1"></div>
-            <div class="col-md-2">
+            <div class="col-md-5">
                 <h3>Riwayat</h3>
             </div>
-            <div class="col-md-6" align="right">
-                <form method="post" action="{{ url('/search-history') }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                    <input type="hidden" name="isCustom" value="true" />
-                    <input autocomplete="off" data-provide="datepicker" type="text" data-date-format="yyyy-mm-dd" value="{{ old('from') }}" class="datepicker" id="datepicker1" name="custom[]" placeholder="Dari">
-                    <input autocomplete="off" data-provide="datepicker" value="{{ old('to') }}" type="text" data-date-format="yyyy-mm-dd" class="datepicker" id="datepicker2" name="custom[]" placeholder="Sampai">
-                    <button class="btn btn-primary">Cari</button>
-                </form>
-            </div>
-            <div class="col-md-2" align="right">
+            <div class="col-md-5" align="right">
                 <a class="btn btn-success" href="{{ url('/laporan-penjualan') }}">Buat Laporan</a>
             </div>
             <div class="col-md-1"></div>
@@ -42,7 +33,13 @@
                             <th scope="col">Nama</th>
                             <th scope="col">Total Transaksi</th>
                             <th scope="col">Nomor Resi</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Nomor Telepon</th>
+                            <th scope="col">Tanggal Transaksi</th>
+                            <th scope="col">
+                                Status
+                                &nbsp;
+                                <a href="#" style="color: lightblue;" data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter"></span> Filter</a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,9 +47,19 @@
                             <tr>
                                 <th scope="row">{{ $item->id }}</th>
                                 <td>{{ $item->nama_penerima }}</td>
-                                <td>{{ $item->total_transaksi }}</td>
+                                <td>Rp. {{ number_format($item->total_transaksi, 2) }}</td>
                                 <td>{{ $item->no_resi }}</td>
-                                <td>{{ ($item->status_pesanan == 5) ? 'Success' : 'Failed'}}</td>
+                                <td>{{ $item->no_telepon }}</td>
+                                <td>{{ $item->tgl_transaksi }}</td>
+                                <td>
+                                    @php
+                                        if($item->status_pesanan == 5) {
+                                            echo '<span style="color: green;">Success</span>';
+                                        } else if ($item->status_pesanan == 6) {
+                                            echo '<span style="color: red;">Failed</span>';
+                                        }
+                                    @endphp
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -67,6 +74,48 @@
             <div class="col-md-4"></div>
         </div>
     @endif
+
+    <div class="modal" tabindex="-1" role="dialog" id="filterModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><span class="fa fa-filter"></span> Filter Riwayat</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><h5>Periode</h5></p>
+                    <form method="post" action="{{ url('/search-history') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="isCustom" value="true" />
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input autocomplete="off" data-provide="datepicker" type="text" data-date-format="yyyy-mm-dd" value="{{ old('from') }}" class="datepicker form-control" id="datepicker1" name="custom[]" placeholder="Dari">
+                            </div>
+                            <!-- <div class="col-md-2"></div> -->
+                            <div class="col-md-6">
+                                <input autocomplete="off" data-provide="datepicker" value="{{ old('to') }}" type="text" data-date-format="yyyy-mm-dd" class="datepicker form-control" id="datepicker2" name="custom[]" placeholder="Sampai">
+                            </div>
+                        </div>
+                        <p><h5>Status Transaksi</h5></p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <select name="custom[]" class="form-control">
+                                    <option value="5">Success</option>
+                                    <option value="6">Failed</option>
+                                </select>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success"><span class="fa fa-filter"></span> Filter</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
         $(function() {
@@ -92,7 +141,5 @@
             $('.next i').removeClass();
             $('.next i').addClass("fa fa-chevron-right");
         });
-
-
     </script>
 @endsection

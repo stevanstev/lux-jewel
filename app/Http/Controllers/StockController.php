@@ -45,4 +45,14 @@ class StockController extends GeneralController
         
         return redirect('/stock');
     }
+
+    public function fetchItemDetails($id) {
+        $details = Stock::where('product_id','=',$id)->first();
+        
+        return response()->json(array(
+            'statusCode' => 200,
+            'totalStock' => $details->total_stok,
+            'lastUpdate' => $details->updated_at,
+        ));
+    }
 }

@@ -60,9 +60,12 @@ Route::group(['middleware' => 'web'], function() {
     Route::group(['middleware' => 'auth'], function() {
         //Admin
         Route::group(['middleware' => 'admin'], function() {
+            ///Check if pembayaran expired date is match or less than today's date
+            Route::get('/check-expired-scheduler', 'CustomController@checkExpiredScheduler');
+
             Route::get('/admin-dash', 'AdminController@index');
 
-            Route::get('/fetch-items-details/{id}', 'AdminController@fetchItemDetails');
+            Route::get('/fetch-items-details/{id}', 'StockController@fetchItemDetails');
 
             searchRouting(array('a-stuff', array('/stuff', '/search-stuff')), array('a-search-stuff', '/search-stuff'));
             Route::get('/tambah-stuff', 'StuffController@add');

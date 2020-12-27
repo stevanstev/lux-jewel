@@ -12,6 +12,8 @@ use App\Order;
 
 use App\Pembayaran;
 
+use App\Notif;
+
 use DB;
 
 use Auth;
@@ -64,11 +66,21 @@ class CustomController extends GeneralController
                     $newFormat = substr($newFormat, 6, strlen($date) - 1).'-'.substr($newFormat, 0, 5);
                     return $newFormat;
                 };
-                $from = $changeDateFormat($search[0]);
-                $to = $changeDateFormat($search[1]);
+                $from = $search[0] ? $changeDateFormat($search[0]) : '';
+                $to = $search[1] ? $changeDateFormat($search[1]) : '';
+                $status = $search[2] ?? '';
+
                 $query =  DB::table('orders')
-                ->whereBetween('tgl_transaksi', [$from, $to])
-                ->paginate(10);
+                    ->whereBetween('tgl_transaksi', [$from, $to])
+                    ->where('status_pesanan', $status)
+                    ->paginate(10);
+
+                if($from == '' || $to == '') {
+                    $query =  DB::table('orders')
+                    ->where('status_pesanan', $status)
+                    ->paginate(10);
+                }
+                
                 $data = $data('/auth/admin/history', $query, parent::getNotif(), $toggle);   
                 break;
             case 'a-search-order':
@@ -120,5 +132,52 @@ class CustomController extends GeneralController
         $result = $this->searchMap($path, $search);
 
         return view($result->view, ['results' => $result->search, 'isNotif' => $result->notif, 'toggle' => $result->toggle]);
+    }
+
+    public function checkExpiredScheduler() {
+        $date = date('Y-m-d H:i:s');
+        $pembayaran = DB::table('pembayarans')
+        ->where('expired_date', '=', $date)
+        ->orWhere('expired_date', '<', $date)
+        ->where('expired_date', '!=', '#')
+        ->get();
+        $totalData = sizeof($pembayaran);
+        
+        foreach($pembayaran as $k) {
+            $order = new Order();
+            $order->kota_penerima = $k->kota_penerima;
+            $order->provinsi_penerima = $k->provinsi_penerima;
+            $order->total_transaksi = $k->total_transaksi;
+            $order->tgl_transaksi = $k->tgl_transaksi;
+            $order->kode_pos_p = $k->kode_pos_p;
+            $order->kelurahan_p = $k->kelurahan_p;
+            $order->nama_penerima = $k->nama_penerima;
+            $order->no_telepon = $k->no_telepon;
+            $order->alamat_penerima = $k->alamat_penerima;
+            $order->bukti_pembayaran = '';
+            $order->no_resi = '';
+            $order->status_pesanan = 6;
+            $order->biaya_kirim = $k->biaya_kirim;
+            $order->save();
+
+            $notif = new Notif();
+            $notif->message = "Transaksi dengan id $k->id gagal, karena pembayaran melewati batas waktu";
+            $notif->user_id = $k->id_user;
+            $notif->notif_active = 1;
+            $notif->save();
+        }
+
+        $delete = DB::table('pembayarans')
+        ->where('expired_date', '=', $date)
+        ->orWhere('expired_date', '<', $date)
+        ->where('expired_date', '!=', '#')
+        ->delete();
+
+        return response(
+            view('/auth/admin/scheduler_status',
+            array('result'=> array(
+                'schedulerStatus' => 200,
+                'dataDeleted' => $totalData))
+            ),200, ['Content-Type' => 'application/json']);
     }
 }

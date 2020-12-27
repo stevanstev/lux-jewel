@@ -154,6 +154,7 @@ class AdminController extends GeneralController
         if ($konfirmasi == "true") {
             $model = Pembayaran::find($id);
             $model->status_pesanan = 3;
+            $model->expired_date = "#";
             $model->save();
 
             $notif = new Notif();
@@ -173,6 +174,7 @@ class AdminController extends GeneralController
             }
 
             $model->status_pesanan = 1;
+            $model->expired_date = date('Y-m-d H:i:s', strtotime('+2 day', strtotime(date('Y-m-d H:i:s'))));
             $model->save();
 
             $notif = new Notif();
@@ -398,7 +400,7 @@ class AdminController extends GeneralController
         $finalData = array();
         foreach ($getProduct as $p) {
             $nama_produk = $p->nama_produk;
-            $getDetails = DB::select("SELECT SUM(qty) as qty FROM details WHERE nama_produk='$nama_produk' and created_at like '$concat_p%'");
+            $getDetails = DB::select("SELECT SUM(qty) as qty FROM detailorders WHERE nama_produk='$nama_produk' and created_at like '$concat_p%'");
             $obj->id = $p->id;
             $obj->nama_produk = $nama_produk;
             $obj->qty = (empty($getDetails[0]->qty) ? 0 : $getDetails[0]->qty);
@@ -418,7 +420,7 @@ class AdminController extends GeneralController
     }
 
     public function laporanPenjualan(){
-        $getPeriod = DB::select('SELECT DISTINCT YEAR(created_at) AS "year", MONTH(created_at) as "month" FROM ttransactions');
+        $getPeriod = DB::select('SELECT DISTINCT YEAR(created_at) AS "year", MONTH(created_at) as "month" FROM orders');
         $enumDate = array();
 
         foreach($getPeriod as $gp) {
@@ -436,16 +438,8 @@ class AdminController extends GeneralController
 
     public function history() {
         $results = Order::paginate(10);
+        $toggle = sizeof($results) == 0 ? false : true;
 
-        return view('/auth/admin/history', ['isNotif' => parent::getNotif(), 'results' => $results]);
-    }
-
-    public function fetchItemDetails($id) {
-        $details = Stock::where('product_id','=',$id)->first();
-        
-        return response()->json(array(
-            'statusCode' => 200,
-            'totalStock' => $details->total_stok,
-        ));
+        return view('/auth/admin/history', ['isNotif' => parent::getNotif(), 'results' => $results, 'toggle' => $toggle]);
     }
 }

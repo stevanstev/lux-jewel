@@ -42,7 +42,12 @@
                                             <p style="color:red;">{{ $errors->first('nama_produk') }}</p>
                                         </div>
 
-                                        <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <p>Last Update</p>
+                                            <input type="text" disabled id="last_update" name="last_update">
+                                        </div>
+
+                                        <div class="col-md-6">
                                             <p>Total Stock</p>
                                             <input type="number" min="0" value="{{ old('total_stock') }}" id="total_stock" placeholder="Total Stock" name="total_stock">
                                             <p style="color:red;">{{ $errors->first('total_stock') }}</p>
@@ -65,22 +70,35 @@
 
     <script>
         $(function() {
-            let getUrl = window.location;
-            let baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
             $.ajax({
-                url: baseUrl + 'fetch-items-details/' + {{ $products[0]->id }},
+                url: getBaseURL() + 'fetch-items-details/' + '{{ $products[0]->id }}',
             }).done((details) => {
                 $("#total_stock").val(details.totalStock);
+                $("#last_update").val(dateSplit(details.lastUpdate));
             });
         });
 
-        function getDetails(id) {
+        function dateSplit(date) {
+            let newDate = date.split('T');
+            let rightSplit = newDate[1].split('.');
+            newDate = newDate[0] + ' ' + rightSplit[0];
+
+            return newDate;
+        }
+
+        function getBaseURL() {
             let getUrl = window.location;
             let baseUrl = getUrl.protocol + "//" + getUrl.host + "/";
+
+            return baseUrl;
+        }
+
+        function getDetails(id) {
             $.ajax({
-                url: baseUrl + 'fetch-items-details/' + id,
+                url: getBaseURL() + 'fetch-items-details/' + id,
             }).done((details) => {
                 $("#total_stock").val(details.totalStock);
+                $("#last_update").val(dateSplit(details.lastUpdate));
             });
         }
     </script>

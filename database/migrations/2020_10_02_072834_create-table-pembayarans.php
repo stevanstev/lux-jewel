@@ -21,6 +21,7 @@ class CreateTablePembayarans extends Migration
             $table->string('provinsi_penerima');
             $table->integer('total_transaksi');
             $table->string('bukti_pembayaran')->nullable();
+            $table->string('expired_date')->nullable();
             $table->string('biaya_kirim')->default('0');
             $table->string('tgl_transaksi');
             $table->string('kode_pos_p');

@@ -85,7 +85,7 @@
                             <a href="{{ url('/user-profile') }}">{{ Auth::user()->nama_lengkap }}</a>
                             <a href="{{ url('/notifikasi') }}">
                                 @if($isNotif) 
-                                    <span class="bg-danger"><i class="fa fa-send"></i> Notification</span>
+                                    <span class="bg-danger" style="border-radius: 7px; color:white;font-weight: bold;"><i class="fa fa-send"></i> Notification</span>
                                 @else 
                                     Notification
                                 @endif
