@@ -99,10 +99,12 @@ class StuffController extends GeneralController
         $checkedColor = $product->color;
         $checkedBahan = $product->bahan;
         $bahans = Bahan::all();
+        $stocks = Stock::where('product_id', '=', $id)->first();
 
         $props = array(
             'isNotif' => parent::getNotif(),
             'products' => $product, 
+            'stocks' => $stocks,
             'colors' => $colors, 
             'categories' => $categories, 
             'checkedColor' => $checkedColor,
@@ -156,13 +158,16 @@ class StuffController extends GeneralController
     		$model->foto = $foto->getClientOriginalName();
     		$foto->move('img/product/',$foto->getClientOriginalName());
     	}
-        $model->stok = $stok;
         $model->harga_produk = $harga_produk;
         $model->deskripsi = $deskripsi;
         $model->color = $colors;
         $model->kategori = $kategori;
         $model->bahan = $bahan;
         $model->save();
+
+        $stock = Stock::where('product_id', '=', $id)->first();
+        $stock->total_stok = $stok;
+        $stock->save();
 
         return redirect('/stuff');
     }

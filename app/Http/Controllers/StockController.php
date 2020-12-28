@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 class StockController extends GeneralController
 {
     public function index() {
-        $products = Produk::paginate(10);
+        $products = Produk::all();
         $isNotif = parent::getNotif();
 
         return view('auth/admin/stock', ['isNotif' => $isNotif, 'products' => $products]);

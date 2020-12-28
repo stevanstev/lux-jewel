@@ -20,6 +20,20 @@
             <div class="col-md-1"></div>
             <div class="col-md-3">
                 <h3>Status Transaksi</h3>
+                @php 
+                    function compareDate($compareDate) {
+                        $date = date('Y-m-d H:i:s');
+                        $result = new \StdClass;
+                        $result->status = $compareDate;
+                        $result->color = 'green';
+                        if($compareDate == $date || $compareDate < $date) {
+                            $result->status = 'Expired';
+                            $result->color = 'red';
+                        }
+
+                        return $result;
+                    }
+                @endphp
             </div>
             <div class="col-md-7" align="right">
                 <form method="post" action="{{ url('/search-transactions') }}">
@@ -57,7 +71,8 @@
                                         if($d->status_pesanan == 0) {
                                             echo "Menunggu Update Admin";
                                         } else if($d->status_pesanan == 1) {
-                                            echo "Menunggu Pembayaran <p style='color: green;'>Batas Waktu: ($d->expired_date)</p>";
+                                            $isExpired = compareDate($d->expired_date);
+                                            echo "Menunggu Pembayaran <p style='color: $isExpired->color;'>Batas Waktu: $isExpired->status</p>";
                                         } else if($d->status_pesanan == 2) {
                                             echo "Menunggu Konfirmasi";
                                         } else {
@@ -79,11 +94,18 @@
                                         </button>
                                     @php
                                         } else if($d->status_pesanan == 1) {
+                                        $buttonExpired = compareDate($d->expired_date);
+                                            if($buttonExpired->status == 'Expired') {
                                     @endphp 
-                                        <a href="{{ url('/upload-bukti') }}/{{ $d->id }}" class="btn btn-success">
-                                            Upload Pembayaran
-                                        </a>
+                                            <a href="#" class="btn btn-danger">{{ $buttonExpired->status }}</a>
                                     @php
+                                            } else {
+                                    @endphp
+                                            <a href="{{ url('/upload-bukti') }}/{{ $d->id }}" class="btn btn-success">
+                                                Upload Pembayaran
+                                            </a>
+                                    @php
+                                            }
                                         } else if($d->status_pesanan == 2) {
                                     @endphp 
                                         <a href="#" type="button" class="btn btn-danger">

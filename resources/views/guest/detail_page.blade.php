@@ -25,14 +25,7 @@
                 <div class="col-lg-6">
                     <div class="product__details__text">
                         <h3>{{ $products->nama_produk }}</h3>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <span>( {{ rand(0, 1000) }} reviews )</span>
-                        </div>
+                        
                         <div class="product__details__price">Rp {{ number_format($products->harga_produk, 2) }}</div>
                         @php 
                             if($products->total_stok != 0){

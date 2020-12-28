@@ -15,7 +15,7 @@
                             <h5>Ubah Produk</h5>
                         </div>
                         <div class="contact__form">
-                            <form action="{{ url('/update-stock-action') }}" method="post" enctype="multipart/form-data">
+                            <form action="{{ url('/update-stuff-action') }}" method="post" enctype="multipart/form-data">
                                 <input type="text" hidden name="_token" value="{{ csrf_token() }}"/>
                                 <input type="text" hidden name="id" value="{{ $products->id }}"/>
                                 <div class="row">
@@ -36,7 +36,7 @@
                                     <div class="col-md-6">
                                         <span>Stok Produk</span>
                                         <p></p>
-                                        <input value="{{ $products->stok }}" type="text" placeholder="Stok" name="stok">
+                                        <input value="{{ $stocks->total_stok }}" type="text" placeholder="Stok" name="stok">
                                         <p style="color:red;">{{ $errors->first('stok') }}</p>
                                     </div>
 

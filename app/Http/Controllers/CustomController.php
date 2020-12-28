@@ -60,7 +60,7 @@ class CustomController extends GeneralController
             case 'a-search-history':
             case 'a-history':
                 // check if product table is not empty
-                $toggle = ($page == 'a-search-history') ? true : false;
+                $toggle = ($page == 'a-search-history' || $page == 'a-history') ? true : false;
                 $changeDateFormat = function($date) {
                     $newFormat = str_replace('/','-', $date);
                     $newFormat = substr($newFormat, 6, strlen($date) - 1).'-'.substr($newFormat, 0, 5);
@@ -80,7 +80,14 @@ class CustomController extends GeneralController
                     ->where('status_pesanan', $status)
                     ->paginate(10);
                 }
-                
+
+                if($from == $to) {
+                    $query =  DB::table('orders')
+                    ->where('tgl_transaksi', 'like' , explode(' ', $from)[0].'%')
+                    ->where('status_pesanan', $status)
+                    ->paginate(10);
+                }
+
                 $data = $data('/auth/admin/history', $query, parent::getNotif(), $toggle);   
                 break;
             case 'a-search-order':

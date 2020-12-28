@@ -6,8 +6,8 @@
 
 @section('section')
     @include('template/banner')
-
-    @include('template/service')
-
-    @include('template/gallery')
+    <br/>
+    <br/>
+    <br/>
+    <br/>
 @endsection

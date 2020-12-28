@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Auth;
+
 class OthersController extends GeneralController
 {
     public function about() {
@@ -15,6 +17,7 @@ class OthersController extends GeneralController
     }
 
     public function contact() {
-        return view('guest/contact', ['isNotif' => parent::getNotif()]);
+    	$isAuth = !Auth::guest() ? parent::getNotif() : '';
+        return view('guest/contact', ['isNotif' => $isAuth]);
     }
 }

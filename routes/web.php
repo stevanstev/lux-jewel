@@ -67,6 +67,8 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/fetch-items-details/{id}', 'StockController@fetchItemDetails');
 
+            searchRouting(array('a-history', array('/history', '/search-history')), array('a-search-history', '/search-history'));
+
             searchRouting(array('a-stuff', array('/stuff', '/search-stuff')), array('a-search-stuff', '/search-stuff'));
             Route::get('/tambah-stuff', 'StuffController@add');
             Route::post('/tambah-action', 'StuffController@addAction');
@@ -123,7 +125,7 @@ Route::group(['middleware' => 'web'], function() {
 
             Route::get('/periods/{id}', 'PredictionController@periods');
 
-            searchRouting(array('a-history', array('/history', '/search-history')), array('a-search-history', '/search-history'));
+            
             Route::get('/history', 'AdminController@history');
 
             searchRouting(array('a-order', array('/order', '/search-order')), array('a-search-order', '/search-order'));
