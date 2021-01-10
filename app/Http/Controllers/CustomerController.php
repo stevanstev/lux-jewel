@@ -107,6 +107,7 @@ class CustomerController extends GeneralController
         $user_id = Auth::user()->id;
         $items = $request->input('jsonItems');
 
+        // Validation here
         $kota_penerima = Auth::user()->kota;
         $provinsi_penerima = Auth::user()->provinsi;
         $total_transaksi = $request->input('total_transaksi');
@@ -117,6 +118,42 @@ class CustomerController extends GeneralController
         $nama_penerima = Auth::user()->nama_lengkap;
         $no_telepon = Auth::user()->no_hp;
         $alamat_penerima = Auth::user()->alamat;
+
+        $inputNamaPenerima = $request->input('nama_penerima');
+        $inputKotaPenerima = $request->input('kota_penerima');
+        $inputProvinsiPenerima = $request->input('provinsi_penerima');
+        $inputKodePosPenerima = $request->input('kode_pos_p');
+        $inputKelurahanPenerima = $request->input('kelurahan_p');
+        $inputNoTeleponPenerima = $request->input('no_telepon');
+        $inputAlamatPenerima = $request->input('alamat_penerima');
+
+        if(!empty($inputNamaPenerima)) {
+            $nama_penerima = $inputNamaPenerima;
+        }
+
+        if(!empty($inputKotaPenerima)) {
+            $kota_penerima = $inputKotaPenerima;
+        }
+
+        if(!empty($inputProvinsiPenerima)) {
+            $provinsi_penerima = $inputProvinsiPenerima;
+        }
+
+        if(!empty($inputKodePosPenerima)) {
+            $kode_pos_p = $inputKodePosPenerima;
+        }
+
+        if(!empty($inputKelurahanPenerima)) {
+            $kelurahan_p = $inputKelurahanPenerima;
+        }
+
+        if(!empty($inputNoTeleponPenerima)) {
+            $no_telepon = $inputNoTeleponPenerima;
+        }
+
+        if(!empty($inputAlamatPenerima)) {
+            $alamat_penerima = $inputAlamatPenerima;
+        }
 
         $model = new Pembayaran;
         $model->kota_penerima = $kota_penerima;
@@ -184,46 +221,11 @@ class CustomerController extends GeneralController
             $model->save();
         }
 
-        $nama_penerima = $request->input('nama_penerima');
-        $kota_penerima = $request->input('kota_penerima');
-        $provinsi_penerima = $request->input('provinsi_penerima');
-        $kode_pos_p = $request->input('kode_pos_p');
-        $kelurahan_p = $request->input('kelurahan_p');
-        $no_telepon = $request->input('no_telepon');
-        $alamat_penerima = $request->input('alamat_penerima');
-
         $id = $request->input('id');
 
         $model = Pembayaran::find($id);
         $model->bukti_pembayaran = $bukti->getClientOriginalName();
         $model->expired_date = "#";
-        if(!empty($nama_penerima)) {
-            $model->nama_penerima = $nama_penerima;
-        }
-
-        if(!empty($kota_penerima)) {
-            $model->kota_penerima = $kota_penerima;
-        }
-
-        if(!empty($provinsi_penerima)) {
-            $model->provinsi_penerima = $provinsi_penerima;
-        }
-
-        if(!empty($kode_pos_p)) {
-            $model->kode_pos_p = $kode_pos_p;
-        }
-
-        if(!empty($kelurahan_p)) {
-            $model->kelurahan_p = $kelurahan_p;
-        }
-
-        if(!empty($no_telepon)) {
-            $model->no_telepon = $no_telepon;
-        }
-
-        if(!empty($alamat_penerima)) {
-            $model->alamat_penerima = $alamat_penerima;
-        }
         $model->status_pesanan = 2;
         $model->save();
 

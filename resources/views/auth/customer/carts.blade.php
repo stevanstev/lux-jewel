@@ -85,13 +85,49 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="discount__content">
-                            
-                        </div>
+                <h4>Data Penerima</h4>
+                <span><i>Data penerima tidak wajib diisi, jika tidak diisi, maka akan diisi dengan data yang terdaftar</i></span>
+                
+                <br/>
+                <br/>
+                <form action="{{ url('/item-checkout') }}" method="post">
+                <input type="hidden" value="{{ csrf_token() }}" name="_token" />
+                <div class="row" align="center">
+                    <div class="col-lg-4">
+                        <input type="text" name="nama_penerima" class="form-control" value="" placeholder="Nama Penerima"/>
                     </div>
-                    <div class="col-lg-4 offset-lg-2">
+                    <div class="col-lg-4">
+                        <input type="text" name="kota_penerima" class="form-control" value="" placeholder="Kota Penerima"/>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="provinsi_penerima" class="form-control" value="" placeholder="Provinsi Penerima"/>
+                    </div>
+                </div>
+                
+                <br/>
+                <br/>
+
+                <div class="row" align="center">
+                    <div class="col-lg-4">
+                         <input type="text" name="kode_pos_p" class="form-control" value="" placeholder="Kode Pos"/>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="kelurahan_p" class="form-control" value="" placeholder="Kelurahan Penerima"/>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" name="no_telepon" class="form-control" max="12" value="" placeholder="Nomor Telepon"/>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <textarea style="resize: none;" resize="false" name="alamat_penerima" class="form-control" value="" placeholder="Alamat Penerima"></textarea>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5">
                         <div class="cart__total__procced">
                             <h6>Total Pembayaran</h6>
                             <ul>
@@ -100,8 +136,6 @@
                                 <li>Biaya Kurir <span id="tambahan">Rp 0</span></li>
                                 <li>Total <span id="total-harga">Rp {{ number_format($sub_total, 2) }}</span></li>
                             </ul>
-                            <form action="{{ url('/item-checkout') }}" method="post">
-                                <input type="hidden" value="{{ csrf_token() }}" name="_token" />
                                 <input type="hidden" value="{{ $jsonItems }}" name="jsonItems" />
                                 <input type="hidden" name="kurir-final" id="kurir-final"/>
                                 <input type="hidden" name="nama-kurir" id="nama-kurir"/>

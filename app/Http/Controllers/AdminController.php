@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Validator;
 class AdminController extends GeneralController
 {
     public function index() {
-        $model = DB::select('select * from pembayarans limit 5');
+        $model = DB::select('select * from pembayarans');
         $data = new \StdClass;
 
         $notSend = 0;
